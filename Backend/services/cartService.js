@@ -9,7 +9,7 @@ const addItemToCart = async (userId, productId, quantity) => {
     const product = await Product.findById(productId);
 
     if (!product) {
-        throw new Error("Product not found").status(404);
+        throw new Error("Product not found");
     };
 
     let cart = Cart.findOne({ user: userId });
@@ -39,12 +39,12 @@ const updateCartItem = async (userId, productId, quantity) => {
     const product = await Product.findById(productId);
 
     if (!product) {
-        throw new Error("Product not found").status(404);
+        throw new Error("Product not found");
     };
     
     const cart = await Cart.findOne({ user: userId });
     if (!cart) {
-        throw new Error("Cart not found").status(404);
+        throw new Error("Cart not found");
     };
 
     const existingItem = cart.products.find(
@@ -52,7 +52,7 @@ const updateCartItem = async (userId, productId, quantity) => {
     );
 
     if (!existingItem) {
-        throw new Error("Item not in cart").status(404);
+        throw new Error("Item not in cart");
     };
 
     existingItem.quantity = quantity;
@@ -65,7 +65,7 @@ const updateCartItem = async (userId, productId, quantity) => {
 const removeItemFromCart = async (userId, productId) => {
     const cart = await Cart.findOne({ user: userId });
     if (!cart) {
-        throw new Error("Cart not found").status(404);
+        throw new Error("Cart not found");
     };
 
     cart.products = cart.products.filter(
@@ -79,7 +79,7 @@ const removeItemFromCart = async (userId, productId) => {
 const clearCart = async (userId) => {
     const cart = await Cart.findOne({ user: userId});
     if (!cart) {
-        throw new Error("Cart not found").status(404);
+        throw new Error("Cart not found");
     };
 
     cart.products = [];

@@ -38,7 +38,7 @@ const getOrderById = async (orderId) => {
     const order = Order.findById(orderId).populate("products.productId");
 
     if (!order) {
-        throw new Error("Order not found").status(404);
+        throw new Error("Order not found");
     };
     return order;
 };
