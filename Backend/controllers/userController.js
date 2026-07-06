@@ -10,7 +10,7 @@ const getProfile = async (req, res) => {
     }
 };
 
-const userUpdateProfile = async (req, res) => {
+const UpdateProfile = async (req, res) => {
     try {
         const user = await userService.updateUserProfile(req.user.id, req.body);
         res.status(200).json(user)
@@ -22,7 +22,7 @@ const userUpdateProfile = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const user = await userService.deleteUser(req.parrams.id);
+        const user = await userService.deleteUser(req.params.id);
         res.status(200).json({ message: "User deleted"});
     }
     catch (err) {
@@ -30,4 +30,4 @@ const deleteUser = async (req, res) => {
     }
 };
 
-module.exports = { getProfile, userUpdateProfile, deleteUser };
+module.exports = { getProfile, UpdateProfile, deleteUser };

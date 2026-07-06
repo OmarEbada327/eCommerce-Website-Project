@@ -25,7 +25,7 @@ const getProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
-        const product = await productService.create(req.body);
+        const product = await productService.createProduct(req.body);
         res.status(201).json(product);
     }
     catch (err) {
@@ -35,7 +35,7 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        const product = await productService.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidator: true });
+        const product = await productService.updateProduct(req.params.id, req.body, { new: true, runValidator: true });
         if (!product) {
             return res.status(404).json({ message: "Product not found"});
         }

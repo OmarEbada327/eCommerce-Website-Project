@@ -34,7 +34,7 @@ const getOrder = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
     try {
         const order = await orderService.updateOrderStatus(req.params.id, req.body.status);
-        res.json(200).json(order);
+        res.status(200).json(order);
     }catch (err) {
         res.status(400).json({ message: err.message });
     }

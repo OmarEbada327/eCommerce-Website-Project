@@ -1,7 +1,7 @@
 const Order = require("./../models/orderModel");
 const Cart = require("./../models/cartModel");
 
-const createOrderFromCart = async (userId, PaymentMethod, shippingAddress) => {
+const createOrderFromCart = async (userId, paymentMethod, shippingAddress) => {
     const cart = await Cart.findOne({ user: userId }).populate("products.productId");
     if (!cart || cart.products.length === 0) {
         throw new Error("Cart is empty");
@@ -27,15 +27,15 @@ const createOrderFromCart = async (userId, PaymentMethod, shippingAddress) => {
 
     cart.products = [];
     await cart.save();
-    return cart;
+    return order;
 };
 
 const getOrdersByUser = async (userId) => {
-    return await order.find({ user: userId }).populate("products.productId");
+    return await Order.find({ user: userId }).populate("products.productId");
 };
 
 const getOrderById = async (orderId) => {
-    const order = Order.findById(orderId).populate("products.productId");
+    const order = await Order.findById(orderId).populate("products.productId");
 
     if (!order) {
         throw new Error("Order not found");
@@ -47,7 +47,7 @@ const updateOrderStatus = async (orderId, status) => {
     const order = await Order.findByIdAndUpdate(
         orderId,
         { status },
-        { new: true, runValidator: true }
+        { new: true, runValidators: true }
     );
 
     if (!order) {
@@ -57,7 +57,7 @@ const updateOrderStatus = async (orderId, status) => {
 };
 
 const cancelOrder = async (orderId) => {
-    return await UpdateOrderStatus(orderId, "cancelled");
+    return await updateOrderStatus(orderId, "cancelled");
 };
 
-module.exports = { createOrderFromCart, getOrderByUser, getOrderById, updateOrderStatus, cancelOrder };
+module.exports = { createOrderFromCart, getOrdersByUser, getOrderById, updateOrderStatus, cancelOrder };

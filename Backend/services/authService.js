@@ -1,4 +1,4 @@
-const brcypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { findUserByEmail } = require("./userService");
 
@@ -8,7 +8,7 @@ const loginUser = async (email, password) => {
         throw new Error("Invaild email or password");
     }
 
-    const isMatch = await brcypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
         throw new Error("Invaild email or password")
