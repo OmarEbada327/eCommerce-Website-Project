@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
         trim: true,
     },
     price: {
-        type: Number,
+        type: String,
         required: [true, "Please provide product price"],
         min: [0, "Price cannot be negative"],
     },
