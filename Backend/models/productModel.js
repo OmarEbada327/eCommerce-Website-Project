@@ -6,9 +6,13 @@ const productSchema = new mongoose.Schema({
         trim: true,
     },
     price: {
-        type: String,
+        type: Number,
         required: [true, "Please provide product price"],
         min: [0, "Price cannot be negative"],
+    },
+    currency: {
+        type: String,
+        default: "EGP",
     },
     quantity: {
         type: Number,
@@ -24,6 +28,10 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide product category"],
         trim: true,
+    },
+    images: {
+        type: [String],
+        default: [],
     },
 }, { timestamps: true });
 
