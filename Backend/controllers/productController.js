@@ -25,7 +25,14 @@ const getProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
-        const product = await productService.createProduct(req.body);
+        const productData = {
+            ...req.body,
+            image: {
+                url: req.file.path,
+                publicId: req.file.filename,
+            },
+        };
+        const product = await productService.createProduct(productData);
         res.status(201).json(product);
     }
     catch (err) {
@@ -35,7 +42,15 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        const product = await productService.updateProduct(req.params.id, req.body, { new: true, runValidator: true });
+        const updateDate = {... req.body };
+
+        if (req.file) {
+            updateData.image = {
+                url: req.file.path,
+                publicId: req.file.filename,
+            };
+        }
+        const product = await productService.updateProduct(req.params.id, updateDate, { new: true, runValidator: true });
         if (!product) {
             return res.status(404).json({ message: "Product not found"});
         }
