@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Product = require("./models/productModel");
 const { MONGO_URI } = require("./config/config");
 
+
 const sampleProducts = [{
     name: "AMD RYZEN 9-9950X3D2 Dual Edition Box",
     price: 57499,
