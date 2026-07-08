@@ -1,8 +1,10 @@
 const productService = require("./../services/productService");
+const sanitize = require("mongo-sanitize");
 
 const getProducts = async (req, res) => {
     try {
-        const products = await productService.getAllProducts(req.query);
+        const filters = sanitize(req.query);
+        const products = await productService.getAllProducts(filters);
         res.status(200).json(products);
     }
     catch (err) {

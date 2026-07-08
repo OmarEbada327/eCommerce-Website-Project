@@ -1,4 +1,5 @@
 const cartService = require("./../services/cartService");
+const sanitize = require("mongo-sanitize");
 
 const getCart = async (req, res) => {
     try {
@@ -12,7 +13,7 @@ const getCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
     try {
-        const { productId, quantity } = req.body;
+        const { productId, quantity } =  sanitize(req.body);
         const cart = await cartService.addItemToCart(req.user.id, productId, quantity);
         res.status(200).json(cart);
     }
@@ -23,7 +24,7 @@ const addToCart = async (req, res) => {
 
 const updateCartItem = async (req, res) => {
     try {
-        const { productId, quantity } = req.body;
+        const { productId, quantity } = sanitize(req.body);
         const cart = await cartService.updateCartItem(req.user.id, productId, quantity);
         res.status(200).json(cart);
     }
