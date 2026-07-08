@@ -1,4 +1,5 @@
 const userService = require("../services/userService");
+const sanitize = require("mongo-sanitize");
 
 const getProfile = async (req, res) => {
     try {
@@ -12,7 +13,8 @@ const getProfile = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
-        const user = await userService.updateUserProfile(req.user.id, req.body);
+        const data = sanitize(req.body);
+        const user = await userService.updateUserProfile(req.user.id, data);
         res.status(200).json(user)
     }
     catch (err) {
