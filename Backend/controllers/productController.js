@@ -54,7 +54,7 @@ const updateProduct = async (req, res) => {
                 publicId: file.filename,
             }));
         }
-        const product = await productService.updateProduct(req.params.id, updateData, { new: true, runValidator: true });
+        const product = await productService.updateProduct(req.params.id, updateData);
         if (!product) {
             return res.status(404).json({ message: "Product not found"});
         }
