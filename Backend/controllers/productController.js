@@ -54,6 +54,7 @@ const updateProduct = async (req, res) => {
         if (!product) {
             return res.status(404).json({ message: "Product not found"});
         }
+        res.status(200).json(product);
     }
     catch (err) {
         res.status(400).json({message: err.message});
@@ -62,7 +63,7 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async(req, res) => {
     try {
-        const product = await productService.findByIdAndDelete(req.params.id);
+        const product = await productService.deleteProduct(req.params.id);
         if (!product) {
             return res.status(404).json({ message: "Product not found"});
         };
