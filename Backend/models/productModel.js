@@ -29,16 +29,18 @@ const productSchema = new mongoose.Schema({
         required: [true, "Please provide product category"],
         trim: true,
     },
-    image: {
+    images: [
+    {
         url: {
             type: String,
-            required: [true, "Please provide product image"],
+            required: [true, "Please provide product image URL"],
         },
         publicId: {
             type: String,
             required: true,
         },
     },
+],
 }, { timestamps: true });
 
 

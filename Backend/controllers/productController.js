@@ -25,12 +25,16 @@ const getProduct = async (req, res) => {
 
 const createProduct = async (req, res) => {
     try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: "At least one product image is required" });
+        }
+
         const productData = {
             ...req.body,
-            image: {
-                url: req.file.path,
-                publicId: req.file.filename,
-            },
+            images:  req.files.map((file) => ({
+                url: file.path,
+                publicId: file.filename,
+            })),
         };
         const product = await productService.createProduct(productData);
         res.status(201).json(product);
@@ -42,15 +46,15 @@ const createProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        const updateDate = {... req.body };
+        const updateData = {... req.body };
 
-        if (req.file) {
-            updateData.image = {
-                url: req.file.path,
-                publicId: req.file.filename,
-            };
+        if (req.files && req.files.length > 0) {
+            updateData.images = req.files.map((file) => ({
+                url: file.path,
+                publicId: file.filename,
+            }));
         }
-        const product = await productService.updateProduct(req.params.id, updateDate, { new: true, runValidator: true });
+        const product = await productService.updateProduct(req.params.id, updateData, { new: true, runValidator: true });
         if (!product) {
             return res.status(404).json({ message: "Product not found"});
         }
