@@ -1,0 +1,7 @@
+$kind: http-request
+name: Get Product By Id
+url: "{{baseUrl}}/products/{{productId}}"
+method: GET
+auth:
+  type: noauth
+order: 707994130020386

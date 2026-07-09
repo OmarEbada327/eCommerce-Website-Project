@@ -1,0 +1,10 @@
+$kind: http-request
+name: Update Order Status (admin only)
+url: "{{baseUrl}}/orders/{{orderId}}/status"
+method: PATCH
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r\n    \"status\": \"shipped\"\r\n}"
+order: 3251802703456339

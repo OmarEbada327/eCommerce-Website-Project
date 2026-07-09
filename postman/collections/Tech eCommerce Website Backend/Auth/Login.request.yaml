@@ -1,0 +1,26 @@
+$kind: http-request
+name: Login
+url: "{{baseUrl}}/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \    \"email\": \"admin@test.com\",\r
+
+    \    \"password\": \"123456\"\r
+
+    }"
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: "const data = pm.response.json();\r
+
+      if (data.token) { pm.collectionVariables.set('token', data.token); } \r
+
+      if (data.user && data.user.id) { pm.collectionVariables.set('userId', data.user.id); }"
+    language: text/javascript
+order: 1479624970229599

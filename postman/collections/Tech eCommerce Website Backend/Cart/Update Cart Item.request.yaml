@@ -1,0 +1,16 @@
+$kind: http-request
+name: Update Cart Item
+url: "{{baseUrl}}/cart"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \    \"productId\": \"{{productId}}\",\r
+
+    \    \"quantity\": 3\r
+
+    }"
+order: 2854812334352589

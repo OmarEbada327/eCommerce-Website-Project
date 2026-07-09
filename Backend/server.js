@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./db/connect");
 const { PORT } = require("./config/config");
 const errorHandler = require("./middleware/errorHandler");
+const cors = require("cors");
 
 
 const productRoutes = require("./routes/productRoute");
@@ -12,6 +13,7 @@ const authRoutes = require("./routes/authRoute");
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
 app.use("/products", productRoutes);

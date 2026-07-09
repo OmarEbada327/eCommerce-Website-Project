@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get My Orders
+url: "{{baseUrl}}/orders/mine"
+method: GET
+order: 2810679118548304

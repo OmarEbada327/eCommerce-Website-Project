@@ -1,0 +1,5 @@
+$kind: http-request
+name: Remove Item From Cart
+url: "{{baseUrl}}/cart/{{productId}}"
+method: DELETE
+order: 3277769298351901

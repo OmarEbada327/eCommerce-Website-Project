@@ -1,0 +1,15 @@
+$kind: collection
+name: Tech eCommerce Website Backend
+description: Full route coverage for the eCommerce backend,Set {{baseUrl}} to your running server (default [http://localhost:3000](http://localhost:3000)). Log in once and the token auto-saves to {{token}} for every protected request.
+variables:
+  baseUrl: ""
+  token: ""
+  productId: ""
+  userId: ""
+  orderId: ""
+auth:
+  - id: 69d13fd8-22bc-494a-a37f-c400716563d9
+    type: bearer
+    name: Bearer auth
+    credentials:
+      token: "{{token}}"

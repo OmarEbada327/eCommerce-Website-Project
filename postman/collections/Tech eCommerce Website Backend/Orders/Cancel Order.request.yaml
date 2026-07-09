@@ -1,0 +1,5 @@
+$kind: http-request
+name: Cancel Order
+url: "{{baseUrl}}/orders/{{orderId}}/cancel"
+method: PATCH
+order: 3503211560452130

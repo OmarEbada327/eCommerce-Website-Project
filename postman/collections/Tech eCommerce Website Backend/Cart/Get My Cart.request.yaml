@@ -1,0 +1,5 @@
+$kind: http-request
+name: Get My Cart
+url: "{{baseUrl}}/cart"
+method: GET
+order: 1783554632257

@@ -1,0 +1,16 @@
+$kind: http-request
+name: Update My Profile
+url: "{{baseUrl}}/users/profile"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\": \"Admin 232\", //Name Updated\r
+
+    \    \"phone\": \"01144443333\" //It's not a real phone number :)\r
+
+    }"
+order: 36934864741521

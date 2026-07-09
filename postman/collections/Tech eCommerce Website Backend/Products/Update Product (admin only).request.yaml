@@ -1,0 +1,18 @@
+$kind: http-request
+name: Update Product (admin only)
+url: "{{baseUrl}}/products/{{productId}}"
+method: PUT
+body:
+  type: formdata
+  content:
+    - type: text
+      key: price
+      value: "55000"
+      description: ""
+      disabled: false
+    - type: text
+      key: quantity
+      value: "8"
+      description: ""
+      disabled: false
+order: 4044075719823024

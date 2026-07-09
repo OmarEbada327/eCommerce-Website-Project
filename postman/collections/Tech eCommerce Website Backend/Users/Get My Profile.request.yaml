@@ -1,0 +1,12 @@
+$kind: http-request
+name: Get My Profile
+url: "{{baseUrl}}/users/profile"
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \    \"id\": \"6a4ea7aec926db551e464608\"\r
+
+    }"
+order: 1783541880992

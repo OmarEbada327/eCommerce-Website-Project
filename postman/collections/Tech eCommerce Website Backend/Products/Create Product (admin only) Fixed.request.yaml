@@ -1,0 +1,54 @@
+$kind: http-request
+name: Create Product (admin only)
+url: "{{baseUrl}}/products"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: name
+      value: LENOVO LEGION Pro 7 16IAX10H 83F500BBIN - Ultra 9 275HX (24C/24T) - Geforce RTX 5070TI 12G - 32GB DDR5 6400HZ (2*16) - 1TB Gen4 - 16, OLED, 2K, 240Hz - RGB Backlit - WIN11
+      disabled: false
+    - type: text
+      key: price
+      value: "139999"
+      disabled: false
+    - type: text
+      key: currency
+      value: EGP
+      disabled: false
+    - type: text
+      key: quantity
+      value: "5"
+      disabled: false
+    - type: text
+      key: description
+      value: 16-inch gaming laptop powered by the Intel Core Ultra 9 275HX processor and NVIDIA GeForce RTX 5070 Ti 12 GB graphics, featuring a 240 Hz WQXGA OLED display with 100% DCI-P3 color coverage, 16 GB DDR5-6400 memory, a 1 TB PCIe 4.0 NVMe SSD, Wi-Fi 7, and advanced cooling for high-end gaming, content creation, and AI-accelerated workloads.
+      disabled: false
+    - type: text
+      key: category
+      value: Gaming Laptop's
+      disabled: false
+    - type: file
+      key: images
+      src:
+        - postman-cloud:///1f17b260-3e79-4b80-b6f8-cfa7f945ff59
+        - postman-cloud:///1f17b260-456b-4100-ab1f-f2b2f4a8f97b
+        - postman-cloud:///1f17b260-47c6-4170-936c-669f9eb472bb
+        - postman-cloud:///1f17b260-47fe-43e0-b528-b1b13e994111
+        - postman-cloud:///1f17b260-482f-4120-b7b4-1ed7fce3e998
+      disabled: false
+scripts:
+  - type: afterResponse
+    code: |-
+      let data;
+      try {
+        data = pm.response.json();
+      } catch (e) {
+        data = null;
+      }
+      if (data && data._id) {
+        pm.collectionVariables.set('productId', data._id);
+      }
+    language: text/javascript
+order: 3087616260251695

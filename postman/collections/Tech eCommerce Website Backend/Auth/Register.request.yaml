@@ -1,0 +1,25 @@
+$kind: http-request
+name: Register
+url: "{{baseUrl}}/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: "{\r
+
+    \    \"name\": \"Admin\",\r
+
+    \    \"email\": \"admin@test.com\",\r
+
+    \    \"password\": \"123456\",\r
+
+    \    \"phone\": \"01000000000\",\r
+
+    \    \"role\": \"admins\"\r
+
+    }"
+auth:
+  type: noauth
+examples: .resources/Register.resources/examples
+order: 1783538370909

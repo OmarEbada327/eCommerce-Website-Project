@@ -1,0 +1,5 @@
+$kind: http-request
+name: Delete User (admin only)
+url: "{{baseUrl}}/users/{{userId}}"
+method: DELETE
+order: 1196795574828568
