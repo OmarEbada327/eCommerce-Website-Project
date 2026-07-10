@@ -271,6 +271,12 @@ body {
   font-size: 13px;
   color: var(--text-muted);
   cursor: pointer;
+  /* 1. Safari and iOS Safari (Both old and modern versions) */
+  -webkit-user-select: none; 
+  /* To Older Firefox versions */
+  -moz-user-select: none;    
+  /* TO Old internet Explorer */
+  -ms-user-select: none;
   user-select: none;
 }
 
