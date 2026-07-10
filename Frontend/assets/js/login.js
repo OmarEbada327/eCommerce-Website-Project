@@ -1,24 +1,29 @@
-// ---------------------------------------------------------------------
-// Point this at your running backend.
-// ---------------------------------------------------------------------
+
 const API_BASE = "http://localhost:3000";
 
-const form = document.getElementById("registerForm");
-const fields = ["name", "email", "phone", "password", "confirmPassword"];
+const form = document.getElementById("loginForm");
+const fields = ["email", "password"];
 const touched = {};
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedEmail = localStorage.getItem("silicon_house_remembered_email");
+  if (savedEmail) {
+    const emailInput = document.getElementById("email");
+    emailInput.value = savedEmail;
+    document.getElementById("rememberMe").checked = true;
+    
+    // Mark it as touched and render its valid state on load
+    touched["email"] = true;
+    renderFieldState("email");
+  }
+});
 
 function validate(field, value) {
   switch (field) {
-    case "name":
-      return value.trim().length >= 2 ? "" : "Enter at least 2 characters";
     case "email":
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "" : "Enter a valid email address";
-    case "phone":
-      return /^01[0125][0-9]{8}$/.test(value.replace(/[\s-]/g, "")) ? "" : "Enter a valid Egyptian phone number (e.g. 01012345678)";
     case "password":
-      return value.length >= 6 ? "" : "Use at least 6 characters";
-    case "confirmPassword":
-      return value === document.getElementById("password").value ? "" : "Passwords don't match";
+      return value.length > 0 ? "" : "Enter your password";
     default:
       return "";
   }
@@ -29,17 +34,19 @@ function renderFieldState(field) {
   const value = document.getElementById(field).value;
   const error = validate(field, value);
 
-  // Reset states completely
+  // 1. Reset all states first
   wrap.classList.remove("valid", "error");
   const dot = wrap.querySelector(".pin-dot");
   dot.classList.remove("valid", "error");
 
-  // Show error if touched (even if empty). Show valid ONLY if filled and error-free.
+  // 2. Apply states cleanly if touched
   if (touched[field]) {
     if (error) {
+      // If there's an error, it's ALWAYS an error (even if empty)
       wrap.classList.add("error");
       dot.classList.add("error");
     } else if (value.length > 0) {
+      // Only mark it valid if it has content and no errors
       wrap.classList.add("valid");
       dot.classList.add("valid");
     }
@@ -55,7 +62,6 @@ fields.forEach((field) => {
   input.addEventListener("input", () => {
     hideServerError();
     renderFieldState(field);
-    if (field === "password") renderFieldState("confirmPassword");
   });
   input.addEventListener("blur", () => {
     touched[field] = true;
@@ -67,11 +73,12 @@ document.querySelectorAll(".toggle-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const targetId = btn.getAttribute("data-toggle");
     const input = document.getElementById(targetId);
-    if (!input) return;
-    
     const isHidden = input.type === "password";
+    
+    // Toggle password character type
     input.type = isHidden ? "text" : "password";
     
+    // Swap icon dynamically between Eye and Eye-Off (Slashed)
     if (isHidden) {
       btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
@@ -96,21 +103,19 @@ function hideServerError() {
 
 function friendlyError(rawMessage) {
   if (!rawMessage) return "Something went wrong. Please try again.";
-  if (rawMessage.includes("E11000") && rawMessage.includes("email")) {
-    return "An account with this email already exists.";
+
+  if (rawMessage.toLowerCase().includes("invalid email or password")) {
+    return "That email or password isn't right. Please try again.";
   }
-  if (rawMessage.includes("E11000")) {
-    return "That value is already in use.";
-  }
-  if (rawMessage.toLowerCase().includes("validation failed")) {
-    return "Please check your details and try again.";
+  if (rawMessage.toLowerCase().includes("not authorized")) {
+    return "Your session isn't valid. Please sign in again.";
   }
   return rawMessage;
 }
 
 function setSubmitting(isSubmitting) {
   const btn = document.getElementById("submitBtn");
-  document.getElementById("submitLabel").textContent = isSubmitting ? "Creating account..." : "Create account";
+  document.getElementById("submitLabel").textContent = isSubmitting ? "Signing in..." : "Sign in";
   document.getElementById("submitArrow").style.display = isSubmitting ? "none" : "inline-block";
   btn.disabled = isSubmitting;
 }
@@ -118,10 +123,7 @@ function setSubmitting(isSubmitting) {
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // Force all fields to be marked as touched when clicking create account
   fields.forEach((f) => (touched[f] = true));
-  
-  // Validate and render error UI for everything immediately
   const errors = fields.map((f) => renderFieldState(f));
 
   const firstErrorIndex = errors.findIndex((err) => err !== "");
@@ -135,34 +137,33 @@ form.addEventListener("submit", async (e) => {
   hideServerError();
 
   const payload = {
-    name: document.getElementById("name").value,
     email: document.getElementById("email").value,
-    phone: document.getElementById("phone").value.replace(/[\s-]/g, ""),
     password: document.getElementById("password").value,
   };
 
   try {
-    const res = await fetch(`${API_BASE}/auth/register`, {
+    const res = await fetch(`${API_BASE}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Registration failed");
+    if (!res.ok) throw new Error(data.message || "Sign in failed");
 
-    document.getElementById("formSection").classList.add("hide");
-    document.getElementById("successCard").classList.add("show");
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("authUser", JSON.stringify(data.user));
 
-    setTimeout(() => {
-      window.location.href = "./login.html";
-    }, 2000);
-  } catch (err) {
-    const message = friendlyError(err.message);
-    showServerError(message);
-
-    if (err.message && err.message.includes("email")) {
-      document.querySelector('.field[data-field="email"]').classList.add("error");
+    const rememberMeCheckbox = document.getElementById("rememberMe");
+    if (rememberMeCheckbox.checked) {
+      localStorage.setItem("silicon_house_remembered_email", document.getElementById("email").value);
+    } else {
+      localStorage.removeItem("silicon_house_remembered_email");
     }
+
+    window.location.href = "../index.html";
+  } catch (err) {
+    showServerError(friendlyError(err.message));
+    document.querySelector('.field[data-field="password"]').classList.add("error");
   } finally {
     setSubmitting(false);
   }
