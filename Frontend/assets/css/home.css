@@ -1,0 +1,585 @@
+/* ==========================================================================
+   NAVIGATION BAR HEADER COMPONENT
+   ========================================================================== */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30; /* Anchors navigation bar over hero banner and grid levels */
+  background: rgba(11, 13, 18, 0.92);
+  -webkit-backdrop-filter: blur(8px); /* Frosted-glass look over background storefront elements */
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* Storefront Flex Navbar Branding Modifier */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.brand span {
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.02em;
+}
+
+/* Centered Horizontal Application Links Section */
+.nav-links {
+  display: flex;
+  gap: 22px;
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-links a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--signal);
+  border-bottom-color: var(--signal);
+}
+
+/* Action Control Wrapper Group (Right-hand nav content) */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+/* Floating Numeric Interactive Shopping Cart Indicator Button */
+.cart-btn {
+  position: relative;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 150ms ease;
+}
+.cart-btn:hover { border-color: var(--copper); }
+
+/* Absolute layout position pin configuration for floating numeric count circle */
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--copper);
+  color: #12151C;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+/* Backend JWT-Driven Conditional Login Layout Container */
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Small Storefront Component Utility Buttons */
+.btn-ghost-small,
+.btn-primary-small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+.btn-ghost-small {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-ghost-small:hover { border-color: var(--signal); color: var(--signal); }
+.btn-primary-small {
+  background: var(--copper);
+  color: #12151C;
+}
+.btn-primary-small:hover { background: var(--copper-bright); }
+
+/* Logged-In User Authentication Verification Label */
+.user-greeting {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   STOREFRONT MAIN BANNER SPLASH SECTION
+   ========================================================================== */
+.hero-banner {
+  background: linear-gradient(160deg, #0D1017 0%, #0A0C11 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 56px 24px;
+}
+
+.hero-banner-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.hero-banner .eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--copper);
+  margin: 0 0 12px;
+}
+
+.hero-banner h1 {
+  font-family: 'Chakra Petch', sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.2;
+  margin: 0 0 12px;
+  max-width: 560px;
+}
+
+.hero-banner .sub {
+  color: var(--text-muted);
+  font-size: 14.5px;
+  max-width: 480px;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ==========================================================================
+   CATALOG GRID ENGINE AND FILTERING HEADER
+   ========================================================================== */
+.catalog { 
+  padding: 40px 24px 80px; 
+}
+.catalog-inner { 
+  max-width: 1200px; 
+  margin: 0 auto; 
+}
+
+.catalog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+  flex-wrap: wrap; /* Wraps search input cleanly to its own row on lower viewports */
+}
+
+.catalog-header h2 {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 20px;
+  margin: 0;
+}
+
+/* Store Search Component Bar */
+.search-wrap {
+  position: relative;
+  width: 260px;
+}
+
+.search-wrap svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-wrap input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px 9px 34px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+}
+.search-wrap input:focus { border-color: var(--signal); }
+.search-wrap input::placeholder { color: #5A6274; }
+
+/* Dynamic Async Component Status State Indicators */
+.loading-msg,
+.empty-msg {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 60px 0;
+  text-align: center;
+  grid-column: 1 / -1; /* Forces item to occupy all available cells across columns */
+}
+
+/* ==========================================================================
+   PRODUCT GRID DISPLAY CARD ARCHITECTURE
+   ========================================================================== */
+.product-grid {
+  display: grid;
+  /* Fluid CSS grid engine layout generation handles resizing without media queries */
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 18px;
+}
+
+.product-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 150ms ease, transform 150ms ease;
+}
+.product-card:hover { border-color: var(--copper); transform: translateY(-2px); }
+
+/* Aspect Ratio Constrained Hardware Image Card Wrapper */
+.product-card-img {
+  aspect-ratio: 1 / 1;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+.product-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+/* Carousel Pagination Dots Overlay Structure */
+.product-card-img .img-dots {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.product-card-img .img-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+}
+.product-card-img .img-dots span.active { background: var(--signal); }
+
+.product-card-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.product-card-category {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+
+.product-card-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0;
+  color: var(--text);
+}
+
+/* Hardware Hardware Metrics Quantizer Ticks (Live Stock Representation) */
+.stock-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto; /* Pushes element content layout seamlessly down to container floor */
+}
+.stock-row .ticks { display: flex; gap: 2px; }
+.stock-row .tick {
+  width: 6px;
+  height: 9px;
+  border-radius: 1px;
+  background: var(--border);
+}
+.stock-row .tick.on.ok { background: var(--pcb-green); }
+.stock-row .tick.on.low { background: var(--danger); }
+.stock-row .stock-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.product-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.product-card-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+}
+.product-card-price small {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* Cart Operational Injection Actions Button */
+.add-to-cart-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--copper);
+  color: #12151C;
+  border: none;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 150ms ease;
+  flex-shrink: 0;
+}
+.add-to-cart-btn:hover { background: var(--copper-bright); }
+.add-to-cart-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+/* ==========================================================================
+   FOOTER INFORMATION LAYER
+   ========================================================================== */
+.site-footer {
+  border-top: 1px solid var(--border);
+  padding: 20px 24px;
+}
+.site-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+/* Live Status Monitoring Visual Overrides */
+.footer-note #apiStatus.online { color: var(--pcb-green); }
+.footer-note #apiStatus.offline { color: var(--danger); }
+
+/* ==========================================================================
+   OFF-CANVAS CART SLIDING PANEL SIDEBAR DRAWER
+   ========================================================================== */
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5); /* Semi-transparent dim shade overlay over page contents */
+  display: none;
+  justify-content: flex-end; /* Pin panel container to far right screen margin */
+  z-index: 50;
+}
+/* Operational class injected dynamically via JavaScript UI module */
+.cart-overlay.open { 
+  display: flex; 
+}
+
+.cart-panel {
+  width: 360px;
+  max-width: 92%;
+  height: 100%;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-panel-header {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.cart-panel-header button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 20px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.cart-items {
+  flex: 1;
+  overflow-y: auto; /* Allows smooth scrolling navigation inside cart list arrays */
+  padding: 8px 20px;
+}
+
+.cart-empty {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  text-align: center;
+  padding: 40px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Individual Inline Item Layout Structure Inside Cart */
+.cart-line {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cart-line-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.cart-line-qty {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Plus/Minus Numeric Quantity Controller Modifiers */
+.qty-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.qty-stepper button {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+}
+.qty-stepper span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  min-width: 14px;
+  text-align: center;
+}
+
+.remove-line-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  font-size: 11px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.cart-panel-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--border);
+}
+
+.cart-total-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   FLOATING TOAST ALERTS POPUP COMPONENT
+   ========================================================================== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%); /* Centering layout mathematics engine helper */
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-family: 'JetBrains Mono', monospace;
+  z-index: 100;
+  opacity: 0;
+  pointer-events: none; /* Disables unexpected mouse clicks blockages while invisible */
+  transition: opacity 200ms ease;
+}
+.toast.show { 
+  opacity: 1; 
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUT RESPONSES AND OVERRIDES
+   ========================================================================== */
+@media (max-width: 860px) {
+  /* Hides text layout tracking inline navigation options inside small layouts */
+  .nav-links { display: none; }
+  .hero-banner h1 { font-size: 26px; }
+}
+
+/* ==========================================================================
+   ACCESSIBILITY AWARE MOTION GRAPHICS REDUCTION
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
