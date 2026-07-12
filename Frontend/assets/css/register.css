@@ -1,19 +1,29 @@
+/* ==========================================================================
+   GLOBAL CONFIGURATION & THEME VARIABLES
+   ========================================================================== */
 :root {
-  --bg: #0B0D12;
-  --surface: #12151C;
-  --surface-2: #171B24;
-  --border: #232838;
-  --copper: #B8742E;
-  --copper-bright: #D68F46;
-  --signal: #4FD1C5;
-  --pcb-green: #3FBF7F;
-  --danger: #E2574C;
-  --text: #EDEEF2;
-  --text-muted: #8B93A7;
+  /* Core Background & Layering Colors */
+  --bg: #0B0D12;           /* Deep dark baseline background */
+  --surface: #12151C;      /* Primary container/card surface color */
+  --surface-2: #171B24;    /* Secondary surface color for inputs and elevated blocks */
+  --border: #232838;       /* Subtle low-contrast tech border accent */
+
+  /* Cyberpunk / Hardware Inspired Accent Palettes */
+  --copper: #B8742E;       /* Industrial metallic copper primary accent */
+  --copper-bright: #D68F46;/* Hover state highlight for copper components */
+  --signal: #4FD1C5;       /* Electric cyan/teal for focus states and secondary links */
+  --pcb-green: #3FBF7F;    /* Printed Circuit Board green for validation success states */
+  --danger: #E2574C;       /* Alert red for field/server error warnings */
+
+  /* Typography Colors */
+  --text: #EDEEF2;         /* Off-white primary text for high readability */
+  --text-muted: #8B93A7;   /* Low-emphasis slate gray text for labels and subheadings */
 }
 
+/* Global Box-Sizing Reset: Ensures padding/borders are included in total widths */
 * { box-sizing: border-box; }
 
+/* Base Document Configuration */
 body {
   margin: 0;
   background: var(--bg);
@@ -21,12 +31,15 @@ body {
   color: var(--text);
 }
 
+/* Master Layout Framework: Establishes a 100vh split screen viewport */
 .page {
   min-height: 100vh;
   display: flex;
 }
 
-/* ---------- LEFT: hero / brand panel ---------- */
+/* ==========================================================================
+   LEFT PANEL: HERO & BRANDING SIDEBAR
+   ========================================================================== */
 .hero {
   width: 42%;
   background: linear-gradient(160deg, #0D1017 0%, #0A0C11 100%);
@@ -36,9 +49,10 @@ body {
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* Clips absolute background decorative items like trace lines */
 }
 
+/* Absolute SVGs creating geometric circuit trace overlays */
 .hero-traces {
   position: absolute;
   inset: 0;
@@ -47,6 +61,7 @@ body {
   height: 100%;
 }
 
+/* Sidebar Brand Identity Layout */
 .brand {
   display: flex;
   align-items: center;
@@ -62,8 +77,13 @@ body {
   letter-spacing: 0.02em;
 }
 
-.chip-art { margin-bottom: 40px; position: relative; }
+/* Reserved space for tech/chip graphic art */
+.chip-art { 
+  margin-bottom: 40px; 
+  position: relative; 
+}
 
+/* Prominent Tech Typography Headers */
 .hero h1 {
   font-family: 'Chakra Petch', sans-serif;
   font-weight: 700;
@@ -83,6 +103,7 @@ body {
   margin: 0;
 }
 
+/* Decorative Hardcore Spec-Sheet Styling at Bottom of Sidebar */
 .spec-sheet {
   position: relative;
   border-top: 1px solid var(--border);
@@ -98,19 +119,28 @@ body {
   padding: 6px 0;
 }
 
-.spec-row span.val { color: var(--text); }
+.spec-row span.val { 
+  color: var(--text); 
+}
 
-/* ---------- RIGHT: form panel ---------- */
+/* ==========================================================================
+   RIGHT PANEL: INTERACTIVE ACCESSIBLE FORM
+   ========================================================================== */
 .form-panel {
-  flex: 1;
+  flex: 1; /* Absorbs remaining screen space to the right of the sidebar */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
 }
 
-.form-wrap { width: 100%; max-width: 400px; }
+/* Standard constrained container for login/register layout structures */
+.form-wrap { 
+  width: 100%; 
+  max-width: 400px; 
+}
 
+/* Mobile Top Branding Navigation Block (Hidden on desktop layout viewport) */
 .mobile-brand {
   display: none;
   align-items: center;
@@ -136,7 +166,10 @@ body {
   margin: 0 0 32px;
 }
 
-.field { margin-bottom: 20px; }
+/* Individual Form Fields Structure */
+.field { 
+  margin-bottom: 20px; 
+}
 
 .field label {
   display: flex;
@@ -150,6 +183,7 @@ body {
   text-transform: uppercase;
 }
 
+/* Interactive Hardware Status Indication Dots (Glow Effect) */
 .pin-dot {
   width: 8px;
   height: 8px;
@@ -162,8 +196,12 @@ body {
 .pin-dot.valid { background: var(--pcb-green); box-shadow: 0 0 8px var(--pcb-green); }
 .pin-dot.error { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
 
-.input-wrap { position: relative; }
+/* Position Wrap for Inside Form Icons & Utility Buttons */
+.input-wrap { 
+  position: relative; 
+}
 
+/* Absolute left positioning for embedded inline form vector icons */
 .input-wrap svg.icon {
   position: absolute;
   left: 14px;
@@ -173,12 +211,13 @@ body {
   pointer-events: none;
 }
 
+/* Text Input Baseline Theme Styles */
 .input-wrap input {
   width: 100%;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 12px 14px 12px 40px;
+  padding: 12px 14px 12px 40px; /* Generous left padding prevents text overlapping icon */
   color: var(--text);
   font-family: 'Inter', sans-serif;
   font-size: 14px;
@@ -186,12 +225,18 @@ body {
   transition: border-color 150ms ease, box-shadow 150ms ease;
 }
 .input-wrap input::placeholder { color: #5A6274; }
+
+/* Interactive State Ring Focus Mechanics */
 .input-wrap input:focus { border-color: var(--signal); box-shadow: 0 0 0 3px rgba(79,209,197,0.13); }
 .field.valid .input-wrap input { border-color: var(--pcb-green); box-shadow: 0 0 0 3px rgba(63,191,127,0.13); }
 .field.error .input-wrap input { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(226,87,76,0.13); }
 
-.input-wrap input.has-toggle { padding-right: 44px; }
+/* Right padding accommodation for fields containing interactive elements (e.g. show password) */
+.input-wrap input.has-toggle { 
+  padding-right: 44px; 
+}
 
+/* Absolute Toggle Visibility Button Positioning Overlay */
 .toggle-btn {
   position: absolute;
   right: 12px;
@@ -205,6 +250,7 @@ body {
   padding: 0;
 }
 
+/* Client-Side Validation JavaScript Message Blocks */
 .field-error {
   display: none;
   align-items: center;
@@ -213,8 +259,11 @@ body {
   font-size: 12px;
   color: var(--danger);
 }
-.field.error .field-error { display: flex; }
+.field.error .field-error { 
+  display: flex; 
+}
 
+/* API/Database Integration Server Level Warning Messages */
 .server-error {
   display: none;
   align-items: center;
@@ -227,8 +276,11 @@ body {
   color: var(--danger);
   font-size: 13px;
 }
-.server-error.show { display: flex; }
+.server-error.show { 
+  display: flex; 
+}
 
+/* Main Submission Button Style Block */
 .submit-btn {
   width: 100%;
   background: var(--copper);
@@ -257,6 +309,7 @@ body {
 }
 .footer-line a { color: var(--signal); text-decoration: none; font-weight: 500; }
 
+/* Sub-Form Structural Element Control Wrapper */
 .form-options {
   display: flex;
   align-items: center;
@@ -264,6 +317,7 @@ body {
   margin-bottom: 24px;
 }
 
+/* Legacy Native Styling Configurations for Fallbacks */
 .remember-me {
   display: flex;
   align-items: center;
@@ -271,12 +325,9 @@ body {
   font-size: 13px;
   color: var(--text-muted);
   cursor: pointer;
-  /* 1. Safari and iOS Safari (Both old and modern versions) */
-  -webkit-user-select: none; 
-  /* To Older Firefox versions */
-  -moz-user-select: none;    
-  /* TO Old internet Explorer */
-  -ms-user-select: none;
+  -webkit-user-select: none; /* Safari & iOS */
+  -moz-user-select: none;    /* Firefox Legacy */
+  -ms-user-select: none;     /* IE Legacy */
   user-select: none;
 }
 
@@ -295,7 +346,9 @@ body {
 }
 .forgot-link:hover { text-decoration: underline; }
 
-/* ---------- success state ---------- */
+/* ==========================================================================
+   SUCCESS CONTEXT STATUS STATE
+   ========================================================================== */
 .success-card {
   display: none;
   background: var(--surface);
@@ -304,7 +357,10 @@ body {
   padding: 32px;
   text-align: center;
 }
-.success-card.show { display: block; }
+.success-card.show { 
+  display: block; 
+}
+
 .success-icon {
   width: 48px;
   height: 48px;
@@ -315,6 +371,7 @@ body {
   justify-content: center;
   margin: 0 auto 16px;
 }
+
 .success-card h2 {
   font-family: 'Chakra Petch', sans-serif;
   font-size: 20px;
@@ -322,8 +379,14 @@ body {
 }
 .success-card p { color: var(--text-muted); font-size: 14px; margin: 0; }
 
-#formSection.hide { display: none; }
+#formSection.hide { 
+  display: none; 
+}
 
+/* ==========================================================================
+   ADVANCED HARDWARE CHECKBOX OVERRIDES
+   Custom tactical styled checkbox implementation
+   ========================================================================== */
 .remember-me {
   display: inline-flex;
   align-items: center;
@@ -332,11 +395,8 @@ body {
   font-size: 0.875rem;
   color: #a0aec0;
   cursor: pointer;
-  /* 1. Safari and iOS Safari (Both old and modern versions) */
   -webkit-user-select: none; 
-  /* To Older Firefox versions */
   -moz-user-select: none;    
-  /* TO Old internet Explorer */
   -ms-user-select: none;
   user-select: none;
   transition: color 0.2s ease;
@@ -346,6 +406,7 @@ body {
   color: #E2E8F0;
 }
 
+/* Complete removal of default native box styles to initialize custom styling layout */
 .remember-me input[type="checkbox"] {
   -webkit-appearance: none;
   appearance: none;
@@ -375,6 +436,7 @@ body {
   box-shadow: 0 0 8px rgba(184, 116, 46, 0.3);
 }
 
+/* Custom embedded neon node dot indicator using pseudo-element masking */
 .remember-me input[type="checkbox"]::before {
   content: "";
   width: 8px;
@@ -390,16 +452,26 @@ body {
   transform: scale(1);
 }
 
+/* Accessibility Keyboard Focus Indicator Rings */
 .remember-me input[type="checkbox"]:focus-visible {
   outline: 2px solid #4FD1C5;
   outline-offset: 2px;
 }
 
+/* ==========================================================================
+   RESPONSIVE LAYOUT DISPATCH breakpoints
+   ========================================================================== */
 @media (max-width: 860px) {
+  /* Hides structural large graphic panel sidebar column on tablet/mobile views */
   .hero { display: none; }
+  /* Dispatches simple mobile branding visibility layout fallback */
   .mobile-brand { display: flex; }
 }
 
+/* ==========================================================================
+   ACCESSIBILITY AWARE SYSTEM OVERRIDES
+   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
+  /* Nullifies performance or dynamic transition timings if system preferences request it */
   * { transition: none !important; animation: none !important; }
 }
