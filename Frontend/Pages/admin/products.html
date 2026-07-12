@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Products — SILICON HOUSE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../../assets/css/register.css">
+    <link rel="stylesheet" href="../../assets/css/admin-products.css">
+</head>
+<body>
+
+    <header class="admin-nav">
+        <div class="admin-nav-inner">
+            <a href="../../index.html" class="brand">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" />
+                    <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
+                </svg>
+                <span>SILICON&nbsp;HOUSE</span>
+            </a>
+            <span class="admin-badge">ADMIN</span>
+            <div class="admin-nav-actions">
+                <a href="../../index.html" class="btn-ghost-small">Back to store</a>
+                <button id="signOutBtn" class="btn-ghost-small" type="button">Sign out</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-shell">
+        <div class="admin-shell-inner">
+
+            <div class="admin-header">
+                <div>
+                    <h1>Products</h1>
+                    <p class="admin-sub">Create, edit, and remove catalog listings.</p>
+                </div>
+                <button class="submit-btn admin-add-btn" id="openAddBtn" type="button">+ Add product</button>
+            </div>
+
+            <div id="accessNotice" class="access-notice hidden">
+                <p>You need an admin account to view this page.</p>
+            </div>
+
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th class="col-img"></th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th class="col-num">Price</th>
+                            <th class="col-num">Stock</th>
+                            <th class="col-actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <tr><td colspan="6" class="loading-row">Loading products...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Add/Edit product modal -->
+    <div class="modal-overlay" id="productModalOverlay">
+        <div class="modal-panel">
+            <div class="modal-header">
+                <span id="modalTitle">Add product</span>
+                <button id="modalClose" type="button">&times;</button>
+            </div>
+
+            <form id="productForm" novalidate>
+                <input type="hidden" id="productId" value="" />
+
+                <div class="field" data-field="name">
+                    <label>Product name</label>
+                    <input type="text" id="name" placeholder="AMD Ryzen 7 9800X3D" />
+                    <div class="field-error">Enter a product name</div>
+                </div>
+
+                <div class="field-row">
+                    <div class="field" data-field="price">
+                        <label>Price (EGP)</label>
+                        <input type="number" id="price" min="0" step="1" placeholder="24999" />
+                        <div class="field-error">Enter a valid price</div>
+                    </div>
+                    <div class="field" data-field="quantity">
+                        <label>Stock quantity</label>
+                        <input type="number" id="quantity" min="0" step="1" placeholder="10" />
+                        <div class="field-error">Enter a valid quantity</div>
+                    </div>
+                </div>
+
+                <div class="field" data-field="category">
+                    <label>Category</label>
+                    <select id="category">
+                        <option value="">Select a category</option>
+                        <option value="CPU">CPU</option>
+                        <option value="GPU">GPU</option>
+                        <option value="Memory">Memory</option>
+                        <option value="Storage">Storage</option>
+                        <option value="Motherboard">Motherboard</option>
+                        <option value="Power Supply">Power Supply</option>
+                    </select>
+                    <div class="field-error">Choose a category</div>
+                </div>
+
+                <div class="field" data-field="description">
+                    <label>Description</label>
+                    <textarea id="description" rows="4" placeholder="Full product description..."></textarea>
+                    <div class="field-error">Enter a description</div>
+                </div>
+
+                <div class="field" data-field="images">
+                    <label id="imagesLabel">Images (up to 5)</label>
+                    <input type="file" id="images" accept="image/png,image/jpeg,image/webp" multiple />
+                    <div class="field-error">At least one image is required</div>
+                    <div id="existingImagesNote" class="existing-images-note hidden">
+                        Leave empty to keep the current images. Selecting new files replaces all of them.
+                    </div>
+                </div>
+
+                <div id="formError" class="server-error">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <span id="formErrorText"></span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="saveBtn">
+                    <span id="saveBtnLabel">Save product</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete confirmation modal -->
+    <div class="modal-overlay" id="deleteModalOverlay">
+        <div class="modal-panel modal-panel-small">
+            <div class="modal-header">
+                <span>Delete product</span>
+                <button id="deleteModalClose" type="button">&times;</button>
+            </div>
+            <p class="delete-confirm-text">Delete "<span id="deleteProductName"></span>"? This can't be undone.</p>
+            <div class="delete-actions">
+                <button class="btn-ghost-small" id="cancelDeleteBtn" type="button">Cancel</button>
+                <button class="btn-danger" id="confirmDeleteBtn" type="button">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../../assets/js/auth.js"></script>
+    <script src="../../assets/js/admin-products.js"></script>
+</body>
+</html>

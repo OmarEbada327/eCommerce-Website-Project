@@ -1,0 +1,435 @@
+/* ==========================================================================
+   NAVIGATION BAR
+   ========================================================================== */
+
+/* The main container for the top navigation bar */
+.checkout-nav {
+  border-bottom: 1px solid var(--border); /* Subtle structural divider line */
+  background: rgba(11, 13, 18, 0.92);    /* Dark tint with a touch of transparency */
+}
+
+/* Constrained inner block that centers content horizontally on large screens */
+.checkout-nav-inner {
+  max-width: 1100px;
+  margin: 0 auto;        /* Centers the container horizontally */
+  padding: 16px 24px;
+  display: flex;         /* Places branding and steps on opposite sides */
+  align-items: center;   /* Perfectly aligns items along the vertical axis */
+  justify-content: space-between; /* Pushes child elements to the edges */
+}
+
+/* Branding anchor element combining logo SVG and company name text */
+.checkout-nav .brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;             /* Standardized layout spacing between icon and text */
+  text-decoration: none; /* Strips the default browser link underline */
+  color: var(--text);
+}
+
+/* Typography styles for the brand header label */
+.checkout-nav .brand span {
+  font-family: 'Chakra Petch', sans-serif; /* Tech/Enthusiast display font */
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Visual step indicator tracking checkout progress */
+.checkout-step {
+  font-family: 'JetBrains Mono', monospace; /* Monospaced font for data strings */
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 999px;  /* Produces perfectly rounded pill capsules */
+}
+
+/* ==========================================================================
+   MAIN GRID SHELL LAYOUT
+   ========================================================================== */
+
+/* The master layout grid separating the main checkout forms from the side summary */
+.checkout-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  display: grid;
+  /* Left column (forms) gets 1.4 units of space, right column (summary) gets 1 unit */
+  grid-template-columns: 1.4fr 1fr;
+  gap: 32px;
+  align-items: start;    /* Prevents the right column from stretching full height */
+}
+
+/* Responsive breakpoint: collapses the 2-column layout into a single column stack */
+@media (max-width: 860px) {
+  .checkout-shell { 
+    grid-template-columns: 1fr; 
+  }
+}
+
+/* ==========================================================================
+   LEFT COLUMN: INPUT & DATA ENTRY FORMS
+   ========================================================================== */
+
+/* Individual section block cards (e.g., Shipping Info, Payment Info) */
+.form-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 20px;   /* Stacked layout spacing between blocks */
+}
+
+/* Header element for each form block */
+.form-block h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 16px;
+  margin: 0 0 20px;      /* Pushes form body fields down */
+}
+
+/* Numeric circular badge icons decorating form section headings */
+.step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;    /* Shapes container into a strict circle */
+  background: var(--copper); /* Branding theme primary accent tint */
+  color: #12151C;        /* Dark background contrast match */
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;         /* Simple system to center string characters */
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;        /* Prevents flex constraints from compressing the circle shape */
+}
+
+/* Split layout row helper (e.g., City and Zip Code side-by-side) */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Split down the center into 2 equal fractions */
+  gap: 16px;
+}
+
+/* Isolated layout wrapper for tracking label, input, and validation errors */
+.field { 
+  margin-bottom: 16px; 
+}
+
+/* Micro typography metadata labels sitting above input entry nodes */
+.field label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 7px;
+}
+
+/* Standardized entry fields configuration */
+.field input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 13px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  outline: none;         /* Suppresses default high-contrast browser focus outline rings */
+  box-sizing: border-box; /* Forces padding measurements inside total explicit width */
+  transition: border-color 150ms ease; /* Linear property interpolation for soft focus focus switches */
+}
+
+/* Focus active interaction highlight state */
+.field input:focus { 
+  border-color: var(--signal); /* Electric cyan highlight color */
+}
+
+/* Input placeholder text formatting rules */
+.field input::placeholder { 
+  color: #5A6274; 
+}
+
+/* Error validation container state rule modifier override */
+.field.error input { 
+  border-color: var(--danger); /* Pops input border lines to alert red colors */
+}
+
+/* Error validation string response layout tracking */
+.field-error {
+  display: none;         /* Suppressed out of layouts during standard valid cycles */
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--danger);
+}
+
+/* State toggle helper: displays the message string when parent wrapper fails checks */
+.field.error .field-error { 
+  display: block; 
+}
+
+/* ==========================================================================
+   PAYMENT OPTIONS CARDS
+   ========================================================================== */
+
+/* Structural layout stack container for option layout selectors */
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Individual choice cards selector node components */
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease;
+}
+
+/* Interactive card container hover effects */
+.payment-option:hover { 
+  border-color: var(--signal); 
+}
+
+/* Combined explicit layout rule targeting selected payment option styles */
+.payment-option.active,
+.payment-option:has(input:checked) {
+  border-color: var(--copper);
+  background: rgba(184, 116, 46, 0.06); /* Infuses subtle industrial copper tint backdrop */
+}
+
+/* Standardized sizing constraints tracking inputs */
+.payment-option input {
+  accent-color: var(--copper); /* Tints inner native selector elements to match branding */
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* Inline typography/icon configurations alignment system */
+.payment-icon { 
+  font-size: 16px; 
+  line-height: 1; 
+}
+
+.payment-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 13.5px;
+  color: var(--text);
+}
+
+/* ==========================================================================
+   SERVER SUBMISSION WARNINGS / NOTIFICATIONS
+   ========================================================================== */
+
+/* Universal framework wrapper tracking critical API submission alert panels */
+.server-error {
+  display: none;         /* Suppressed out of document stream by default */
+  align-items: center;
+  gap: 8px;
+  background: rgba(226, 87, 76, 0.08); /* Soft alert transparency red background */
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  padding: 12px 14px;
+  color: var(--danger);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* JavaScript trigger utility selector state class modifier */
+.server-error.show { 
+  display: flex; 
+}
+
+/* ==========================================================================
+   RIGHT COLUMN: ORDER SUMMARY SHEET
+   ========================================================================== */
+
+/* Floating overview dashboard module component container */
+.checkout-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  position: sticky;      /* Anchors view window dynamically upon downward scrolls */
+  top: 24px;             /* Allocates spacing margins between navigation bar bounds */
+}
+
+.checkout-summary h2 {
+  font-family: 'Chakra Petch', sans-serif;
+  font-size: 16px;
+  margin: 0 0 18px;
+}
+
+/* Scrollable layout structure tracking line-item products array stacks */
+.summary-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 320px;     /* Sets boundaries to safely activate internal scrollers */
+  overflow-y: auto;      /* Spawns vertical scrollbars when item quantities overflow dimensions */
+  margin-bottom: 18px;
+}
+
+/* Visual inline loading fallback messages state containers styling rules */
+.summary-loading,
+.summary-empty {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Layout lines defining itemized price breakdowns across transactions */
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border); /* Clean demarcation partition lines */
+}
+
+/* Forces description columns to stretch out, taking up all available empty space */
+.summary-line .name {
+  color: var(--text);
+  flex: 1;
+}
+
+.summary-line .qty {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+
+.summary-line .price {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  white-space: nowrap;   /* Safeguards critical monetary strings against multi-line breaks */
+}
+
+/* Block section tracking calculated subtotal variables fields arrays */
+.summary-totals {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-bottom: 18px;
+}
+
+/* Base parameters formatting metadata breakdowns blocks rows */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Bold typography design class modifier addressing final totals calculation metrics */
+.summary-row.total {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* Minimalist footer guidelines security text styles */
+.secure-note {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 14px 0 0;
+}
+
+/* Disabled input state styles handling submission events throttles blocks */
+#placeOrderBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;  /* Notifies cursor users that operation links are blocked */
+}
+
+/* ==========================================================================
+   TOAST SYSTEM NOTIFICATIONS DISPLAY PANE
+   ========================================================================== */
+
+/* Global notification display overlay framework component properties */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%); /* Multi-axis translate formula guarantees precise horizontal alignment center */
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-family: 'JetBrains Mono', monospace;
+  z-index: 100;          /* Renders stack levels safely ahead of lower page layouts layers */
+  opacity: 0;            /* Defaults module to invisible state structure */
+  pointer-events: none;  /* Avoids blocking background page mouse inputs clicking passes */
+  transition: opacity 200ms ease;
+}
+
+/* Trigger utility visibility toggle modifier class injected via JavaScript */
+.toast.show { 
+  opacity: 1; 
+}
+
+/* ==========================================================================
+   ACCESSIBILITY HARDWARE PERFORMANCE RETRACTORS
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  * { 
+    transition: none !important; /* Disables frame animation computations if OS settings request minimal movement */
+  }
+}
+
+/* ==========================================================================
+   ADDED: DYNAMIC CREDIT CARD SUB-PANEL EMBED
+   ========================================================================== */
+
+/* Sub-panel block drawer that wraps credit card input elements inside the payment card */
+.card-details-panel {
+  margin-top: 16px;
+  padding: 20px 20px 4px;
+  background: rgba(23, 27, 36, 0.4); /* Subdued surface transparency tint layout */
+  border: 1px dashed var(--border);  /* Tech-aesthetic dashed line frame border structure */
+  border-radius: 8px;
+  
+  max-height: 400px;                 /* Absolute maximum limit to safely contain all entry fields */
+  opacity: 1;                        /* Fully visible opaque element */
+  transform: translateY(0);          /* Resting vertical coordinate placement position */
+  overflow: hidden;                  /* Crops any spilling text inputs during collapse cycles */
+  
+  transition: 
+    max-height 300ms ease-in-out, 
+    opacity 250ms ease-in-out, 
+    transform 300ms ease-in-out,
+    padding 300ms ease-in-out,
+    margin-top 300ms ease-in-out,
+    border-color 200ms ease;
+}
+
+.card-details-panel.hidden {
+  max-height: 0 !important;          /* Flattens the container height completely */
+  opacity: 0 !important;             /* Fades out text characters and input frames */
+  transform: translateY(-15px) !important; /* Micro-offset drifts the card upward as it collapses */
+  padding-top: 0 !important;          /* Collapses structural inner padding spaces */
+  padding-bottom: 0 !important;       /* Eliminates lingering spaces at the bottom boundary */
+  margin-top: 0 !important;          /* Drops external layout margins to prevent empty tracking gaps */
+  border-color: transparent !important; /* Softly dissolves the border outline during the shrink */
+}

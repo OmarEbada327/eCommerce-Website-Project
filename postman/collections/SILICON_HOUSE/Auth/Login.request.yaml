@@ -1,5 +1,6 @@
 $kind: http-request
 name: Login
+description: Authenticates a user with the provided credentials and establishes access to protected resources within the application.
 url: "{{baseUrl}}/auth/login"
 method: POST
 headers:
@@ -8,9 +9,9 @@ body:
   type: json
   content: "{\r
 
-    \    \"email\": \"admin@test.com\",\r
+    \    \"email\": \"omar@test.com\",\r
 
-    \    \"password\": \"123456\"\r
+    \    \"password\": \"111111\"\r
 
     }"
 auth:

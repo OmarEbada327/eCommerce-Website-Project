@@ -1,5 +1,5 @@
 $kind: collection
-name: Tech eCommerce Website Backend
+name: SILICON_HOUSE
 description: Full route coverage for the eCommerce backend,Set {{baseUrl}} to your running server (default [http://localhost:3000](http://localhost:3000)). Log in once and the token auto-saves to {{token}} for every protected request.
 variables:
   baseUrl: ""
