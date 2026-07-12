@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout — SILICON HOUSE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/css/register.css">
+    <link rel="stylesheet" href="../assets/css/checkout.css">
+</head>
+<body>
+
+    <header class="checkout-nav">
+        <div class="checkout-nav-inner">
+            <a href="../index.html" class="brand">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" />
+                    <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
+                </svg>
+                <span>SILICON&nbsp;HOUSE</span>
+            </a>
+            <span class="checkout-step">Checkout</span>
+        </div>
+    </header>
+
+    <main class="checkout-shell">
+
+        <!-- Left: forms -->
+        <section class="checkout-forms">
+
+            <div class="form-block">
+                <h2><span class="step-num">1</span> Shipping address</h2>
+                <form id="shippingForm" novalidate>
+                    <div class="field" data-field="street">
+                        <label>Street address</label>
+                        <input type="text" id="street" name="street" placeholder="15 Al Haram Street" />
+                        <span class="field-error"></span>
+                    </div>
+                    <div class="field-row">
+                        <div class="field" data-field="city">
+                            <label>City</label>
+                            <input type="text" id="city" name="city" placeholder="Giza" />
+                            <span class="field-error"></span>
+                        </div>
+                        <div class="field" data-field="state">
+                            <label>State / Governorate</label>
+                            <input type="text" id="state" name="state" placeholder="Giza" />
+                            <span class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field" data-field="zip">
+                            <label>ZIP / Postal code</label>
+                            <input type="text" id="zip" name="zip" placeholder="12345" />
+                            <span class="field-error"></span>
+                        </div>
+                        <div class="field" data-field="country">
+                            <label>Country</label>
+                            <input type="text" id="country" name="country" placeholder="Egypt" value="Egypt" />
+                            <span class="field-error"></span>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="form-block">
+                <h2><span class="step-num">2</span> Payment method</h2>
+                <div class="payment-options" id="paymentOptions">
+                    <label class="payment-option active">
+                        <input type="radio" name="paymentMethod" value="cash_on_delivery" checked />
+                        <span class="payment-icon">💵</span>
+                        <span class="payment-label">Cash on delivery</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="credit_card" />
+                        <span class="payment-icon">💳</span>
+                        <span class="payment-label">Credit card</span>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="paypal" />
+                        <span class="payment-icon">🅿️</span>
+                        <span class="payment-label">PayPal</span>
+                    </label>
+                </div>
+
+                <div id="cardDetailsPanel" class="card-details-panel hidden">
+                    <div class="field" data-field="cardName">
+                        <label for="cardName">Cardholder Name</label>
+                        <input type="text" id="cardName" placeholder="OMAR EBADA" autocomplete="cc-name" />
+                        <div class="field-error" id="cardName-error">Please enter the cardholder name</div>
+                    </div>
+
+                    <div class="field" data-field="cardNumber">
+                        <label for="cardNumber">
+                            Card Number 
+                            <span id="cardBrandBadge" class="card-brand-badge">UNKNOWN</span>
+                        </label>
+                        <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number" />
+                        <div class="field-error" id="cardNumber-error">Please enter a valid 16-digit card number</div>
+                    </div>
+
+                    <div class="card-row">
+                        <div class="field" data-field="cardExpiry">
+                            <label for="cardExpiry">Expiration Date</label>
+                            <input type="text" id="cardExpiry" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" />
+                            <div class="field-error" id="cardExpiry-error">Invalid date (MM/YY)</div>
+                        </div>
+
+                        <div class="field" data-field="cardCvv">
+                            <label for="cardCvv">CVV</label>
+                            <input type="password" id="cardCvv" placeholder="•••" maxlength="3" autocomplete="cc-csc" />
+                            <div class="field-error" id="cardCvv-error">Invalid CVV</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="checkoutError" class="server-error">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="checkoutErrorText"></span>
+            </div>
+
+        </section>
+
+        <!-- Right: order summary -->
+        <aside class="checkout-summary">
+            <h2>Order summary</h2>
+            <div id="summaryItems" class="summary-items">
+                <p class="summary-loading">Loading your cart...</p>
+            </div>
+
+            <div class="summary-totals">
+                <div class="summary-row"><span>Subtotal</span><span id="summarySubtotal">EGP 0.00</span></div>
+                <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+                <div class="summary-row total"><span>Total</span><span id="summaryTotal">EGP 0.00</span></div>
+            </div>
+
+            <button class="submit-btn" id="placeOrderBtn" type="button">
+                <span id="placeOrderLabel">Place order</span>
+            </button>
+
+            <p class="secure-note">🔒 Payment details are never stored on our servers.</p>
+        </aside>
+
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/checkout.js"></script>
+</body>
+</html>
