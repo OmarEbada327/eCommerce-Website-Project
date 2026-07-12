@@ -32,11 +32,13 @@ body:
     - type: file
       key: images
       src:
-        - postman-cloud:///1f17b260-3e79-4b80-b6f8-cfa7f945ff59
-        - postman-cloud:///1f17b260-456b-4100-ab1f-f2b2f4a8f97b
-        - postman-cloud:///1f17b260-47c6-4170-936c-669f9eb472bb
-        - postman-cloud:///1f17b260-47fe-43e0-b528-b1b13e994111
         - postman-cloud:///1f17b260-482f-4120-b7b4-1ed7fce3e998
+        - postman-cloud:///1f17b260-47fe-43e0-b528-b1b13e994111
+        - postman-cloud:///1f17b260-47c6-4170-936c-669f9eb472bb
+        - postman-cloud:///1f17b260-456b-4100-ab1f-f2b2f4a8f97b
+        - postman-cloud:///1f17b260-3e79-4b80-b6f8-cfa7f945ff59
+      contentType: image/jpeg
+      description: ""
       disabled: false
 scripts:
   - type: afterResponse
@@ -50,5 +52,8 @@ scripts:
       if (data && data._id) {
         pm.collectionVariables.set('productId', data._id);
       }
+    language: text/javascript
+  - type: beforeRequest
+    code: ""
     language: text/javascript
 order: 3087616260251695

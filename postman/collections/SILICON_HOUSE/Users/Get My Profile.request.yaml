@@ -1,0 +1,13 @@
+$kind: http-request
+name: Get My Profile
+description: Retrieves the profile information of the currently authenticated user from the `/users/profile` endpoint using the configured `{{baseUrl}}`. This request is intended to return the logged-in user's account details and is typically used after successful authentication to verify or display profile data.
+url: "{{baseUrl}}/users/profile"
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \    \"id\": \"6a4ea7aec926db551e464608\"\r
+
+    }"
+order: 1783541880992

@@ -3,13 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eCommerce</title>
-    <link rel="icon" href="./assets/image/NexusIcon.png" type="image/png">
+    <title>SILICON HOUSE — PC Parts &amp; Components</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="assets/css/register.css">
+    <link rel="stylesheet" href="assets/css/home.css">
 </head>
 <body>
-    <nav class="navBar">
-        <div id="logo"></div>
 
-    </nav>
+    <header class="site-nav">
+        <div class="site-nav-inner">
+            <a href="index.html" class="brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" />
+                    <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
+                </svg>
+                <span>SILICON&nbsp;HOUSE</span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="#" data-category="">All</a>
+                <a href="#" data-category="CPU">CPU</a>
+                <a href="#" data-category="GPU">GPU</a>
+                <a href="#" data-category="Memory">Memory</a>
+                <a href="#" data-category="Storage">Storage</a>
+                <a href="#" data-category="Motherboard">Motherboard</a>
+                <a href="#" data-category="Power Supply">Power Supply</a>
+            </nav>
+
+            <div class="nav-actions">
+                <button class="cart-btn" id="cartBtn" type="button">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span id="cartCount" class="cart-count">0</span>
+                </button>
+
+                <div id="guestActions" class="auth-actions">
+                    <a href="pages/auth/login.html" class="btn-ghost-small">Sign in</a>
+                    <a href="pages/auth/register.html" class="btn-primary-small">Create account</a>
+                </div>
+
+                <div id="userActions" class="auth-actions" style="display:none;">
+                    <span id="userGreeting" class="user-greeting"></span>
+                    <a href="pages/admin/products.html" id="adminLink" class="btn-ghost-small" style="display:none;">Admin</a>
+                    <button id="signOutBtn" class="btn-ghost-small" type="button">Sign out</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-banner">
+        <div class="hero-banner-inner">
+            <p class="eyebrow">Genuine parts. Real inventory.</p>
+            <h1>Build it right, the first time.</h1>
+            <p class="sub">Browse CPUs, GPUs, motherboards, and more — live stock, real pricing, no guesswork.</p>
+        </div>
+    </section>
+
+    <main class="catalog">
+        <div class="catalog-inner">
+
+            <div class="catalog-header">
+                <h2 id="catalogTitle">All products</h2>
+                <div class="search-wrap">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search products..." />
+                </div>
+            </div>
+
+            <div id="productGrid" class="product-grid">
+                <p class="loading-msg">Loading products...</p>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <span>SILICON HOUSE</span>
+            <span class="footer-note">Backend: <span id="apiStatus">checking...</span></span>
+        </div>
+    </footer>
+
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="cart-panel">
+            <div class="cart-panel-header">
+                <span>YOUR CART</span>
+                <button id="cartClose" type="button">&times;</button>
+            </div>
+            <div id="cartItems" class="cart-items">
+                <p class="cart-empty">Cart is empty.</p>
+            </div>
+            <div class="cart-panel-footer">
+                <div class="cart-total-row"><span>Total</span><span id="cartTotal">EGP 0.00</span></div>
+                <button class="submit-btn" id="checkoutBtn" type="button">Checkout</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/home.js"></script>
 </body>
 </html>
