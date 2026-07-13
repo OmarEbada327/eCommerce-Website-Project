@@ -1,5 +1,4 @@
 // Base URL for API communications
-const API_BASE = "http://localhost:3000";
 
 // DOM element references
 const form = document.getElementById("loginForm");
@@ -158,13 +157,7 @@ form.addEventListener("submit", async (e) => {
 
   try {
     // Initiate POST request authentication to backend API routes
-    const res = await fetch(`${API_BASE}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Sign in failed");
+    const data = await window.SiliconHouseApi.post("/auth/login", payload);
 
     // Persist login session tokens and identity details inside localStorage
     localStorage.setItem("authToken", data.token);

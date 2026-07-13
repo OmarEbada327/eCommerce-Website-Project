@@ -34,6 +34,7 @@ function clearSession() {
 // Convenience wrapper for authenticated fetch calls elsewhere.
 // Usage: authFetch("/cart", { method: "POST", body: JSON.stringify(...) })
 async function authFetch(path, options = {}) {
+  if (!window.SiliconHouseApi) throw new Error("API client is not loaded");
   const token = getToken();
   const headers = {
     ...(options.body instanceof FormData ? {} : { "Content-Type": "application/json" }),
@@ -41,8 +42,5 @@ async function authFetch(path, options = {}) {
     ...(options.headers || {}),
   };
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || "Request failed");
-  return data;
+  return window.SiliconHouseApi.request(path, { ...options, headers });
 }

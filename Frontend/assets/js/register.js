@@ -1,5 +1,4 @@
 // Base URL for API communications
-const API_BASE = "http://localhost:3000";
 
 // DOM element references and configuration
 const form = document.getElementById("registerForm");
@@ -166,13 +165,7 @@ form.addEventListener("submit", async (e) => {
 
   try {
     // Initiate POST request authentication to backend API routes
-    const res = await fetch(`${API_BASE}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Registration failed");
+    await window.SiliconHouseApi.post("/auth/register", payload);
 
     // Toggle UI views to indicate a complete and successful setup card state
     document.getElementById("formSection").classList.add("hide");

@@ -30,6 +30,7 @@
   font-weight: 600;
   font-size: 16px;
 }
+.admin-nav .brand svg { display: block; flex-shrink: 0; }
 .admin-badge {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px;
@@ -255,19 +256,71 @@
   color: var(--text);
   font-family: 'Inter', sans-serif;
   font-size: 13.5px;
+  min-height: 44px;
   outline: none;
   box-sizing: border-box;
-  transition: border-color 150ms ease;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
-#productForm textarea { resize: vertical; }
+#productForm textarea { min-height: 104px; resize: vertical; }
 #productForm input:focus,
 #productForm select:focus,
-#productForm textarea:focus { border-color: var(--signal); }
+#productForm textarea:focus { border-color: var(--signal); box-shadow: 0 0 0 3px rgba(79,209,197,.13); }
 #productForm .field.error input,
 #productForm .field.error select,
-#productForm .field.error textarea { border-color: var(--danger); }
+#productForm .field.error textarea { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(226,87,76,.13); }
 #productForm input::placeholder,
 #productForm textarea::placeholder { color: #5A6274; }
+
+#productForm select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%234FD1C5' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-position: right 14px center;
+  background-repeat: no-repeat;
+  background-size: 14px;
+  cursor: pointer;
+  padding-right: 42px;
+}
+#productForm select:invalid { color: var(--text-muted); }
+#productForm select option { background: var(--surface-2); color: var(--text); }
+#productForm select option[value=""] { color: var(--text-muted); }
+
+/* Branded file picker — keeps the native file selection behavior while styling
+   its button consistently with the rest of the admin form. */
+#productForm input[type="file"] {
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  padding: 6px 8px;
+}
+#productForm input[type="file"]::file-selector-button {
+  background: var(--copper);
+  border: 0;
+  border-radius: 6px;
+  color: #12151C;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 11px;
+  padding: 8px 12px;
+  transition: background 150ms ease, transform 150ms ease;
+}
+#productForm input[type="file"]:hover::file-selector-button { background: var(--copper-bright); }
+#productForm input[type="file"]:active::file-selector-button { transform: translateY(1px); }
+/* Chromium fallback for browsers that still use the legacy file button pseudo-element. */
+#productForm input[type="file"]::-webkit-file-upload-button {
+  background: var(--copper);
+  border: 0;
+  border-radius: 6px;
+  color: #12151C;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 11px;
+  padding: 8px 12px;
+}
 
 .field-error {
   display: none;
@@ -341,9 +394,42 @@
 .toast.show { opacity: 1; }
 
 @media (max-width: 700px) {
+  .admin-nav-inner { align-items: flex-start; flex-wrap: wrap; padding: 12px 16px; }
+  .admin-nav-actions { display: flex; gap: 8px; margin-left: 0; order: 3; overflow-x: auto; padding-bottom: 4px; width: 100%; }
+  .admin-nav-actions .btn-ghost-small { flex: 0 0 auto; white-space: nowrap; }
+  .admin-shell { padding: 28px 16px 56px; }
+  .admin-header { align-items: flex-end; flex-direction: row; }
+  .admin-add-btn { width: 100%; }
+  .admin-table-wrap { overflow-x: auto; }
+  .admin-table { min-width: 620px; }
   .field-row { grid-template-columns: 1fr; }
   .admin-table th:nth-child(3),
   .admin-table td:nth-child(3) { display: none; }
+  .modal-overlay { padding: 16px; }
+  .modal-panel { padding: 20px 16px; }
+}
+
+@media (max-width: 480px) {
+  .admin-header { align-items: flex-end; gap: 12px; }
+  .admin-header h1 { font-size: 21px; }
+  .admin-sub { font-size: 12px; line-height: 1.45; max-width: 230px; }
+  .admin-table-wrap { overflow: hidden; }
+  .admin-table { min-width: 0; table-layout: fixed; }
+  .admin-table th, .admin-table td { padding: 10px 7px; }
+  .admin-table th:nth-child(4), .admin-table td:nth-child(4),
+  .admin-table th:nth-child(5), .admin-table td:nth-child(5) { display: none; }
+  .admin-table .col-img { width: 54px; }
+  .admin-table .col-actions { width: 76px; }
+  .admin-table td:nth-child(2) { font-size: 12px; line-height: 1.22; overflow-wrap: anywhere; }
+  .row-actions { gap: 5px; }
+  .icon-btn { height: 28px; width: 28px; }
+}
+
+@media (max-width: 400px) {
+  .admin-nav-inner { gap: 10px; }
+  .admin-nav .brand span { font-size: 14px; }
+  .admin-badge { font-size: 9px; padding: 3px 8px; }
+  .admin-header h1 { font-size: 22px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

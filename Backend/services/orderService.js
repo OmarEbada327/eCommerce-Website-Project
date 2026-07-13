@@ -34,6 +34,13 @@ const getOrdersByUser = async (userId) => {
     return await Order.find({ user: userId }).populate("products.productId");
 };
 
+const getAllOrders = async () => {
+    return await Order.find()
+        .populate("user", "name email phone")
+        .populate("products.productId")
+        .sort({ createdAt: -1 });
+};
+
 const getOrderById = async (orderId, userId) => {
     const order = await Order.findOne({ _id: orderId, user: userId }).populate("products.productId");
 
@@ -71,4 +78,4 @@ const cancelOrder = async (orderId, userId) => {
     return order;
 };
 
-module.exports = { createOrderFromCart, getOrdersByUser, getOrderById, updateOrderStatus, cancelOrder };
+module.exports = { createOrderFromCart, getOrdersByUser, getAllOrders, getOrderById, updateOrderStatus, cancelOrder };

@@ -1,4 +1,3 @@
-const API_BASE = "http://localhost:3000";
 const $ = (id) => document.getElementById(id);
 
 // Must match what the backend actually accepts (uploadMiddleware.js /

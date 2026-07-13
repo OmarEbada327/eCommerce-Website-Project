@@ -1,5 +1,4 @@
 // Base URL configuration for communicating with the backend API
-const API_BASE = "http://localhost:3000";
 
 // Short helper utility to target and retrieve DOM elements by their unique IDs
 const $ = (id) => document.getElementById(id);
@@ -77,16 +76,14 @@ async function checkApiStatus(reachable) {
 // Asynchronously fetches available inventory listings from the backend service layer
 async function loadProducts() {
   try {
-    const res = await fetch(`${API_BASE}/products`);
-    const payload = await res.json();
-    if (!res.ok) throw new Error(payload.message || "Failed to load products");
+    const payload = await window.SiliconHouseApi.get("/products");
 
     allProducts = unwrap(payload);
     checkApiStatus(true);
     renderProducts();
   } catch (err) {
     checkApiStatus(false);
-    $("productGrid").innerHTML = `<p class="empty-msg">Couldn't reach the backend. Is it running at ${API_BASE}?</p>`;
+    $("productGrid").innerHTML = `<p class="empty-msg">Couldn't reach the backend. Is it running at ${window.SiliconHouseApi.baseUrl}?</p>`;
   }
 }
 
@@ -147,11 +144,11 @@ function renderProducts() {
 }
 
 // Binds link components inside navigation tabs to coordinate category switching routines
-document.querySelectorAll(".nav-links a").forEach((link) => {
+document.querySelectorAll(".category-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
     activeCategory = link.dataset.category;
-    document.querySelectorAll(".nav-links a").forEach((l) => l.classList.remove("active"));
+    document.querySelectorAll(".category-nav a").forEach((l) => l.classList.remove("active"));
     link.classList.add("active");
     renderProducts();
   });

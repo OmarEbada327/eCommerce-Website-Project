@@ -17,3 +17,23 @@
 .stage-action { margin-top: 4px; }
 .back-stage-btn { margin-top: 4px; }
 .summary-prompt { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.5; margin: 0; text-align: center; }
+
+/* Match the login/register field treatment: a clear input surface, focus halo,
+   and red validation halo that remain easy to read during checkout. */
+.checkout-forms .field input {
+  min-height: 44px;
+  padding: 12px 14px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+.checkout-forms .field input:focus {
+  border-color: var(--signal);
+  box-shadow: 0 0 0 3px rgba(79,209,197,.13);
+}
+.checkout-forms .field.error input {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(226,87,76,.13);
+}
+.payment-option { background: var(--surface-2); min-height: 52px; }
+.payment-option:focus-within { border-color: var(--signal); box-shadow: 0 0 0 3px rgba(79,209,197,.13); }
+.payment-option.active { box-shadow: inset 3px 0 0 var(--copper); }
+.card-details-panel { background: var(--surface-2); border-style: solid; }

@@ -24,6 +24,7 @@
             </a>
             <span class="admin-badge">ADMIN</span>
             <div class="admin-nav-actions">
+                <a href="orders.html" class="btn-ghost-small">Orders</a>
                 <a href="../../index.html" class="btn-ghost-small">Back to store</a>
                 <button id="signOutBtn" class="btn-ghost-small" type="button">Sign out</button>
             </div>
@@ -98,14 +99,25 @@
 
                 <div class="field" data-field="category">
                     <label for="category">Category</label>
-                    <select id="category" title="Category">
-                        <option value="">Select a category</option>
+                    <select id="category" title="Category" required>
+                        <option value="" disabled selected>Select a category</option>
                         <option value="CPU">CPU</option>
                         <option value="GPU">GPU</option>
                         <option value="Memory">Memory</option>
                         <option value="Storage">Storage</option>
                         <option value="Motherboard">Motherboard</option>
                         <option value="Power Supply">Power Supply</option>
+                        <option value="PC Case">PC Case</option>
+                        <option value="Laptop">Laptop</option>
+                        <option value="Gaming Laptop">Gaming Laptop</option>
+                        <option value="Cooling">Cooling</option>
+                        <option value="Gaming Mouse">Gaming Mouse</option>
+                        <option value="Gaming Keyboard">Gaming Keyboard</option>
+                        <option value="Gaming Headset">Gaming Headset</option>
+                        <option value="Gaming Monitor">Gaming Monitor</option>
+                        <option value="Gaming TV">Gaming TV</option>
+                        <option value="Gaming Controller">Gaming Controller</option>
+                        <option value="Accessories">Accessories</option>
                     </select>
                     <div class="field-error">Choose a category</div>
                 </div>
@@ -154,6 +166,7 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="../../assets/js/api.js"></script>
     <script src="../../assets/js/auth.js"></script>
     <script src="../../assets/js/admin-products.js"></script>
 </body>

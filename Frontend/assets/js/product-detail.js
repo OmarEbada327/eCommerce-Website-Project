@@ -1,4 +1,3 @@
-const API_BASE = "http://localhost:3000";
 const $ = (id) => document.getElementById(id);
 
 let product = null;
@@ -82,9 +81,7 @@ async function loadProduct() {
   }
 
   try {
-    const res = await fetch(`${API_BASE}/products/${id}`);
-    const payload = await res.json();
-    if (!res.ok) throw new Error(payload.message || "Product not found");
+    const payload = await window.SiliconHouseApi.get(`/products/${id}`);
 
     product = unwrap(payload);
     checkApiStatus(true);

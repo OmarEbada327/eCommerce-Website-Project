@@ -41,5 +41,5 @@
 .orders-error { align-items: center; background: rgba(226,87,76,.08); border: 1px solid var(--danger); border-radius: 10px; color: var(--danger); display: flex; flex-wrap: wrap; gap: 10px; padding: 16px; }
 .orders-error span { color: var(--text-muted); font-size: 13px; }
 .orders-error button { margin-left: auto; }
-@media (max-width: 680px) { .orders-page { padding: 32px 16px 64px; } .orders-heading { align-items: flex-start; flex-direction: column; } .order-top { grid-template-columns: 1fr 1fr; } .order-top .status { justify-self: start; } .orders-loading { grid-template-columns: 1fr; } .orders-loading span:not(:first-child) { display: none; } }
+@media (max-width: 680px) { .orders-page { padding: 32px 16px 64px; } .orders-heading { align-items: flex-start; flex-direction: column; } .order-top { grid-template-columns: 1fr 1fr; padding: 14px 16px; } .order-top .status { justify-self: start; } .order-body { padding-left: 16px; padding-right: 16px; } .order-details { align-items: flex-start; flex-direction: column; gap: 9px; } .cancel-order-btn { margin-left: 0; } .orders-loading { grid-template-columns: 1fr; } .orders-loading span:not(:first-child) { display: none; } }
 @media (prefers-reduced-motion: reduce) { .orders-loading span { animation: none; } }

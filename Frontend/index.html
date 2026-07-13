@@ -23,15 +23,9 @@
                 <span>SILICON&nbsp;HOUSE</span>
             </a>
 
-            <nav class="nav-links">
-                <a href="#" data-category="">All</a>
-                <a href="#" data-category="CPU">CPU</a>
-                <a href="#" data-category="GPU">GPU</a>
-                <a href="#" data-category="Memory">Memory</a>
-                <a href="#" data-category="Storage">Storage</a>
-                <a href="#" data-category="Motherboard">Motherboard</a>
-                <a href="#" data-category="Power Supply">Power Supply</a>
-            </nav>
+            <button class="mobile-menu-toggle" type="button" aria-label="Open navigation menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
 
             <div class="nav-actions">
                 <a class="cart-btn" id="cartBtn" href="pages/cart.html">
@@ -78,6 +72,27 @@
                 </div>
             </div>
 
+            <nav class="category-nav" aria-label="Product categories">
+                <a href="#" data-category="" class="active">All products</a>
+                <a href="#" data-category="CPU">CPU</a>
+                <a href="#" data-category="GPU">GPU</a>
+                <a href="#" data-category="Memory">Memory</a>
+                <a href="#" data-category="Storage">Storage</a>
+                <a href="#" data-category="Motherboard">Motherboard</a>
+                <a href="#" data-category="Power Supply">Power supply</a>
+                <a href="#" data-category="PC Case">PC case</a>
+                <a href="#" data-category="Laptop">Laptop</a>
+                <a href="#" data-category="Gaming Laptop">Gaming laptop</a>
+                <a href="#" data-category="Cooling">Cooling</a>
+                <a href="#" data-category="Gaming Mouse">Gaming mouse</a>
+                <a href="#" data-category="Gaming Keyboard">Gaming keyboard</a>
+                <a href="#" data-category="Gaming Headset">Gaming headset</a>
+                <a href="#" data-category="Gaming Monitor">Gaming monitor</a>
+                <a href="#" data-category="Gaming TV">Gaming TV</a>
+                <a href="#" data-category="Gaming Controller">Gaming controller</a>
+                <a href="#" data-category="Accessories">Accessories</a>
+            </nav>
+
             <div id="productGrid" class="product-grid">
                 <p class="loading-msg">Loading products...</p>
             </div>
@@ -95,7 +110,9 @@
 
     <div class="toast" id="toast"></div>
 
+    <script src="assets/js/api.js"></script>
     <script src="assets/js/auth.js"></script>
+    <script src="assets/js/responsive-nav.js"></script>
     <script src="assets/js/home.js"></script>
 </body>
 </html>

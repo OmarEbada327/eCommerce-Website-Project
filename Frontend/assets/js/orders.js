@@ -1,4 +1,3 @@
-const API_BASE = "http://localhost:3000";
 const $ = (id) => document.getElementById(id);
 const cancellingOrderIds = new Set();
 
@@ -19,7 +18,12 @@ function paymentLabel(method) { return { credit_card: "Credit card", paypal: "Pa
 
 function updateHeader() {
   const user = getUser();
-  if (user) { $("userGreeting").textContent = `Hi, ${user.name}`; $("adminLink").style.display = user.role === "admins" ? "inline-flex" : "none"; }
+  if (user) {
+    const isAdmin = user.role === "admins";
+    $("userGreeting").textContent = `Hi, ${user.name}`;
+    $("adminLink").style.display = isAdmin ? "inline-flex" : "none";
+    $("allOrdersAdminLink").style.display = isAdmin ? "inline-flex" : "none";
+  }
 }
 function productInfo(item) { return item.productId && typeof item.productId === "object" ? item.productId : {}; }
 function itemMarkup(item) {
