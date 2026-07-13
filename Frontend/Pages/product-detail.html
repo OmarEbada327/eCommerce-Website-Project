@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product — SILICON HOUSE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/css/register.css">
+    <link rel="stylesheet" href="../assets/css/home.css">
+    <link rel="stylesheet" href="../assets/css/product-detail.css">
+</head>
+<body>
+
+    <header class="site-nav">
+        <div class="site-nav-inner">
+            <a href="../index.html" class="brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" />
+                    <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
+                </svg>
+                <span>SILICON&nbsp;HOUSE</span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="../index.html">All</a>
+            </nav>
+
+            <div class="nav-actions">
+                <a class="cart-btn" id="cartBtn" href="cart.html">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span id="cartCount" class="cart-count">0</span>
+                </a>
+
+                <div id="guestActions" class="auth-actions">
+                    <a href="auth/login.html" class="btn-ghost-small">Sign in</a>
+                    <a href="auth/register.html" class="btn-primary-small">Create account</a>
+                </div>
+
+                <div id="userActions" class="auth-actions" style="display:none;">
+                    <span id="userGreeting" class="user-greeting"></span>
+                    <a href="admin/products.html" id="adminLink" class="btn-ghost-small" style="display:none;">Admin</a>
+                    <button id="signOutBtn" class="btn-ghost-small" type="button">Sign out</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="product-page">
+        <div class="product-page-inner">
+
+            <nav class="breadcrumb" id="breadcrumb">
+                <a href="../index.html">Home</a>
+                <span class="sep">/</span>
+                <span id="breadcrumbCategory">Loading...</span>
+            </nav>
+
+            <div id="loadingState" class="pd-loading">Loading product...</div>
+            <div id="errorState" class="pd-error hidden">
+                <p>Couldn't find that product.</p>
+                <a href="../index.html" class="btn-ghost-small">Back to store</a>
+            </div>
+
+            <div id="productContent" class="product-detail-grid hidden">
+
+                <!-- Gallery -->
+                <div class="pd-gallery">
+                    <div class="pd-main-image">
+                        <img id="mainImage" src="" alt="" />
+                    </div>
+                    <div class="pd-thumbs" id="pdThumbs"></div>
+                </div>
+
+                <!-- Info panel -->
+                <div class="pd-info">
+                    <span class="row-category" id="pdCategory"></span>
+                    <h1 id="pdName" class="pd-name"></h1>
+
+                    <div class="pd-price-row">
+                        <span class="pd-price" id="pdPrice"></span>
+                        <span class="pd-currency" id="pdCurrency"></span>
+                    </div>
+
+                    <div id="pdStockRow" class="stock-row pd-stock-row"></div>
+
+                    <p class="pd-description" id="pdDescription"></p>
+
+                    <div class="pd-qty-row">
+                        <span class="pd-qty-label">Quantity</span>
+                        <div class="qty-stepper pd-qty-stepper">
+                            <button id="qtyDec" type="button">-</button>
+                            <span id="qtyValue">1</span>
+                            <button id="qtyInc" type="button">+</button>
+                        </div>
+                    </div>
+
+                    <button class="submit-btn pd-add-btn" id="addToCartBtn" type="button">
+                        Add to cart
+                    </button>
+
+                    <div class="spec-sheet pd-spec-sheet">
+                        <div class="spec-row"><span>CATEGORY</span><span class="val" id="specCategory">—</span></div>
+                        <div class="spec-row"><span>IN STOCK</span><span class="val" id="specStock">—</span></div>
+                        <div class="spec-row"><span>CURRENCY</span><span class="val" id="specCurrency">—</span></div>
+                        <div class="spec-row"><span>PRODUCT ID</span><span class="val" id="specId">—</span></div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <span>SILICON HOUSE</span>
+            <span class="footer-note">Backend: <span id="apiStatus">checking...</span></span>
+        </div>
+    </footer>
+
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/product-detail.js"></script>
+</body>
+</html>

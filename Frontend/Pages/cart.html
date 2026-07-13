@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart — SILICON HOUSE</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../assets/css/register.css">
+    <link rel="stylesheet" href="../assets/css/home.css">
+    <link rel="stylesheet" href="../assets/css/cart.css">
+</head>
+<body>
+
+    <header class="site-nav">
+        <div class="site-nav-inner">
+            <a href="../index.html" class="brand">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2">
+                    <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" />
+                    <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
+                </svg>
+                <span>SILICON&nbsp;HOUSE</span>
+            </a>
+
+            <nav class="nav-links">
+                <a href="../index.html">All</a>
+            </nav>
+
+            <div class="nav-actions">
+                <span class="cart-btn cart-btn-active" title="You're viewing your cart">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span id="cartCount" class="cart-count">0</span>
+                </span>
+
+                <div id="guestActions" class="auth-actions">
+                    <a href="auth/login.html" class="btn-ghost-small">Sign in</a>
+                    <a href="auth/register.html" class="btn-primary-small">Create account</a>
+                </div>
+
+                <div id="userActions" class="auth-actions" style="display:none;">
+                    <span id="userGreeting" class="user-greeting"></span>
+                    <a href="admin/products.html" id="adminLink" class="btn-ghost-small" style="display:none;">Admin</a>
+                    <button id="signOutBtn" class="btn-ghost-small" type="button">Sign out</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="cart-page">
+        <div class="cart-page-inner">
+
+            <h1 class="cart-page-title">Your cart</h1>
+
+            <!-- Checkout progress -->
+            <div class="checkout-steps">
+                <div class="step active">
+                    <span class="step-num">1</span>
+                    <span class="step-label">Cart</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <span class="step-num">2</span>
+                    <span class="step-label">Shipping</span>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                    <span class="step-num">3</span>
+                    <span class="step-label">Payment</span>
+                </div>
+            </div>
+
+            <!-- Skeleton loading state -->
+            <div id="cartLoadingState" class="cart-skeleton">
+                <div class="cart-page-grid">
+                    <section class="cart-items-panel">
+                        <div class="skeleton-row"><div class="skel skel-thumb"></div><div class="skel-lines"><div class="skel skel-line-lg"></div><div class="skel skel-line-sm"></div></div><div class="skel skel-price"></div></div>
+                        <div class="skeleton-row"><div class="skel skel-thumb"></div><div class="skel-lines"><div class="skel skel-line-lg"></div><div class="skel skel-line-sm"></div></div><div class="skel skel-price"></div></div>
+                        <div class="skeleton-row"><div class="skel skel-thumb"></div><div class="skel-lines"><div class="skel skel-line-lg"></div><div class="skel skel-line-sm"></div></div><div class="skel skel-price"></div></div>
+                    </section>
+                    <aside class="cart-summary-panel">
+                        <div class="skel skel-line-sm" style="width:60%"></div>
+                        <div class="skel skel-line-sm" style="width:80%; margin-top:14px;"></div>
+                        <div class="skel skel-line-sm" style="width:70%; margin-top:14px;"></div>
+                        <div class="skel skel-btn" style="margin-top:24px;"></div>
+                    </aside>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div id="cartEmptyState" class="cart-page-empty hidden">
+                <svg class="empty-cart-art" width="120" height="120" viewBox="0 0 120 120">
+                    <circle cx="45" cy="98" r="6" fill="none" stroke="#4FD1C5" stroke-width="2.5" opacity="0.6"/>
+                    <circle cx="82" cy="98" r="6" fill="none" stroke="#4FD1C5" stroke-width="2.5" opacity="0.6"/>
+                    <path d="M12 18h12l9.5 55a6 6 0 0 0 6 5h44a6 6 0 0 0 6-5l7-38H33"
+                          fill="none" stroke="#B8742E" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+                    <line x1="45" y1="46" x2="97" y2="46" stroke="#4FD1C5" stroke-width="1.5" opacity="0.5"/>
+                    <line x1="47" y1="58" x2="93" y2="58" stroke="#4FD1C5" stroke-width="1.5" opacity="0.5"/>
+                </svg>
+                <p class="empty-title">Your cart is empty</p>
+                <p class="empty-sub">Browse the catalog and add something to build.</p>
+                <a href="../index.html" class="submit-btn cart-empty-btn">Browse products</a>
+            </div>
+
+            <!-- Cart contents -->
+            <div id="cartGrid" class="cart-page-grid hidden">
+                <section class="cart-items-panel">
+                    <div class="cart-items-header">
+                        <span id="cartItemCount">0 items</span>
+                        <button id="clearCartBtn" class="clear-cart-link" type="button">Clear cart</button>
+                    </div>
+                    <div id="cartItemsList"></div>
+                </section>
+
+                <aside class="cart-summary-panel">
+                    <h2>Order summary</h2>
+                    <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">EGP 0.00</span></div>
+                    <div class="summary-row"><span>Shipping</span><span>Free</span></div>
+                    <div class="summary-row total"><span>Total</span><span id="cartGrandTotal">EGP 0.00</span></div>
+                    <button class="submit-btn" id="proceedCheckoutBtn" type="button">Proceed to checkout</button>
+                    <a href="../index.html" class="continue-shopping-link">Continue shopping</a>
+
+                    <div class="trust-strip">
+                        <div class="trust-item">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            Secure checkout
+                        </div>
+                        <div class="trust-item">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                            Free shipping, Egypt-wide
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <span>SILICON HOUSE</span>
+            <span class="footer-note">Backend: <span id="apiStatus">checking...</span></span>
+        </div>
+    </footer>
+
+    <!-- Remove-item confirmation -->
+    <div class="modal-overlay" id="removeModalOverlay">
+        <div class="modal-panel modal-panel-small">
+            <div class="modal-header">
+                <span>Remove item</span>
+                <button id="removeModalClose" type="button">&times;</button>
+            </div>
+            <p class="confirm-text">Remove "<span id="removeItemName"></span>" from your cart?</p>
+            <div class="confirm-actions">
+                <button class="btn-ghost-small" id="cancelRemoveBtn" type="button">Cancel</button>
+                <button class="btn-danger" id="confirmRemoveBtn" type="button">Remove</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear cart confirmation -->
+    <div class="modal-overlay" id="clearModalOverlay">
+        <div class="modal-panel modal-panel-small">
+            <div class="modal-header">
+                <span>Clear cart</span>
+                <button id="clearModalClose" type="button">&times;</button>
+            </div>
+            <p class="confirm-text">Remove all items from your cart? This can't be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn-ghost-small" id="cancelClearBtn" type="button">Cancel</button>
+                <button class="btn-danger" id="confirmClearBtn" type="button">Clear cart</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/cart.js"></script>
+</body>
+</html>
