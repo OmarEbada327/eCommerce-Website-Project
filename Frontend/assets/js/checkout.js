@@ -1,4 +1,3 @@
-
 const $ = (id) => document.getElementById(id);
 
 let cartData = { products: [] };
@@ -21,7 +20,9 @@ function showToast(message) {
 }
 
 function money(n) {
-  return "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 });
+  return (
+    "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
+  );
 }
 
 function unwrap(payload) {
@@ -65,10 +66,14 @@ async function loadCartSummary() {
   try {
     const payload = await authFetch("/cart");
     cartData = unwrap(payload) || { products: [] };
-    $("cartCount").textContent = (cartData.products || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+    $("cartCount").textContent = (cartData.products || []).reduce(
+      (sum, item) => sum + Number(item.quantity || 0),
+      0,
+    );
     renderSummary();
   } catch (err) {
-    $("summaryItems").innerHTML = `<p class="summary-empty">Couldn't load your cart.</p>`;
+    $("summaryItems").innerHTML =
+      `<p class="summary-empty">Couldn't load your cart.</p>`;
     showCheckoutError(friendlyError(err.message));
   }
 }
@@ -77,7 +82,8 @@ function renderSummary() {
   const items = cartData.products || [];
 
   if (items.length === 0) {
-    $("summaryItems").innerHTML = `<p class="summary-empty">Your cart is empty.</p>`;
+    $("summaryItems").innerHTML =
+      `<p class="summary-empty">Your cart is empty.</p>`;
     $("summarySubtotal").textContent = money(0);
     $("summaryTotal").textContent = money(0);
     $("placeOrderBtn").disabled = true;
@@ -85,17 +91,20 @@ function renderSummary() {
   }
 
   let subtotal = 0;
-  $("summaryItems").innerHTML = items.map((item) => {
-    const product = item.productId && item.productId.name ? item.productId : null;
-    const name = product ? product.name : "Product";
-    subtotal += item.totalPrice;
+  $("summaryItems").innerHTML = items
+    .map((item) => {
+      const product =
+        item.productId && item.productId.name ? item.productId : null;
+      const name = product ? product.name : "Product";
+      subtotal += item.totalPrice;
 
-    return `
+      return `
       <div class="summary-line">
         <span class="name">${escapeHTML(name)} <span class="qty">&times;${item.quantity}</span></span>
         <span class="price">${money(item.totalPrice)}</span>
       </div>`;
-  }).join("");
+    })
+    .join("");
 
   $("summarySubtotal").textContent = money(subtotal);
   $("summaryTotal").textContent = money(subtotal);
@@ -127,7 +136,9 @@ requiredFields.forEach((field) => {
   $(field).addEventListener("blur", () => renderFieldState(field));
   $(field).addEventListener("input", () => {
     hideCheckoutError();
-    document.querySelector(`.field[data-field="${field}"]`).classList.remove("error");
+    document
+      .querySelector(`.field[data-field="${field}"]`)
+      .classList.remove("error");
   });
 });
 
@@ -187,7 +198,9 @@ backToShippingBtn.addEventListener("click", () => setCheckoutStage("shipping"));
 document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
   radio.addEventListener("change", () => {
     // Standard visual active class cleanup loop
-    document.querySelectorAll(".payment-option").forEach((opt) => opt.classList.remove("active"));
+    document
+      .querySelectorAll(".payment-option")
+      .forEach((opt) => opt.classList.remove("active"));
     radio.closest(".payment-option").classList.add("active");
 
     /* ==========================================================================
@@ -201,7 +214,7 @@ document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
       } else {
         // Snap panel out of layout stream if option chosen is alternate form
         cardPanel.classList.add("hidden");
-        
+
         // Clean up remaining red validation styling borders if they change methods halfway
         ["cardName", "cardNumber", "cardExpiry", "cardCvv"].forEach((f) => {
           const wrap = document.querySelector(`.field[data-field="${f}"]`);
@@ -223,7 +236,6 @@ function getSelectedPaymentMethod() {
 
 // Event Handlers for handling input formatting masks
 if ($("cardNumber")) {
-  
   // 1. Live Space Formatter & Brand Network Parser
   $("cardNumber").addEventListener("input", (e) => {
     // Use regular expressions to strip any non-digit string entries immediately
@@ -250,7 +262,7 @@ if ($("cardNumber")) {
   // 2. Automated Expiration Date Slash (/) Masking Insertion
   $("cardExpiry").addEventListener("input", (e) => {
     let value = e.target.value.replace(/\D/g, ""); // Restrict entry strictly to numeric strings
-    
+
     if (value.length > 2) {
       // Injects the design forward slash mark automatically between Month and Year values
       e.target.value = value.substring(0, 2) + "/" + value.substring(2, 4);
@@ -280,20 +292,20 @@ function validateLuhnFormula(digits) {
 
   let totalSum = 0;
   let shouldDouble = false;
-  
+
   // Run loop backward from right-side values mapping coordinates to left tracking nodes
   for (let i = cleanStr.length - 1; i >= 0; i--) {
     let currentDigit = parseInt(cleanStr.charAt(i), 10);
-    
+
     if (shouldDouble) {
       currentDigit *= 2;
       if (currentDigit > 9) currentDigit -= 9; // Optimization: Subtracting 9 gets the same result as adding the digits of a 2-digit number (e.g., 14 -> 1+4=5, 14-9=5)
     }
-    
+
     totalSum += currentDigit;
     shouldDouble = !shouldDouble; // Invert doubling cycle flag modifier toggle state step
   }
-  
+
   return totalSum % 10 === 0;
 }
 
@@ -319,8 +331,7 @@ function validateCreditCardFields() {
     nameWrap.classList.remove("error");
   }
 
-  // 2. This checkout does not submit card data to a payment processor, so
-  // accept a complete card format rather than rejecting demo/test numbers.
+  // 2. This checkout does not submit card data to a payment processor
   const numberWrap = document.querySelector('.field[data-field="cardNumber"]');
   if (!validateCardNumberFormat($("cardNumber").value)) {
     numberWrap.classList.add("error");
@@ -332,18 +343,24 @@ function validateCreditCardFields() {
   // 3. Verify Expiration Schema Mechanics & Date Timelines
   const expiryWrap = document.querySelector('.field[data-field="cardExpiry"]');
   const expMatch = $("cardExpiry").value.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/);
-  
+
   if (!expMatch) {
     expiryWrap.classList.add("error");
     isValid = false;
   } else {
     const currentMonth = new Date().getMonth() + 1;
-    const currentYear = parseInt(new Date().getFullYear().toString().substring(2), 10);
+    const currentYear = parseInt(
+      new Date().getFullYear().toString().substring(2),
+      10,
+    );
     const parsedMonth = parseInt(expMatch[1], 10);
     const parsedYear = parseInt(expMatch[2], 10);
-    
+
     // Fail execution loops if year target scales backward or falls short under active parameters month scopes
-    if (parsedYear < currentYear || (parsedYear === currentYear && parsedMonth < currentMonth)) {
+    if (
+      parsedYear < currentYear ||
+      (parsedYear === currentYear && parsedMonth < currentMonth)
+    ) {
       expiryWrap.classList.add("error");
       isValid = false;
     } else {
@@ -368,7 +385,9 @@ function validateCreditCardFields() {
 // ---------------------------------------------------------------------
 function setPlacingOrder(isPlacing) {
   const btn = $("placeOrderBtn");
-  $("placeOrderLabel").textContent = isPlacing ? "Placing order..." : "Place order";
+  $("placeOrderLabel").textContent = isPlacing
+    ? "Placing order..."
+    : "Place order";
   btn.disabled = isPlacing;
 }
 

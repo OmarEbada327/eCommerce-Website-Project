@@ -1,9 +1,11 @@
 const $ = (id) => document.getElementById(id);
 
-// Must match what the backend actually accepts (uploadMiddleware.js /
-// multer-storage-cloudinary's allowedFormats), so bad files get stopped
-// here instead of round-tripping to the server first.
-const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/jpg",
+];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_IMAGE_COUNT = 5;
 
@@ -22,7 +24,9 @@ function showToast(message) {
 }
 
 function money(n) {
-  return "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 });
+  return (
+    "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
+  );
 }
 
 function unwrap(payload) {
@@ -42,7 +46,6 @@ function friendlyError(rawMessage) {
 
 // ---------------------------------------------------------------------
 // Access guard — this whole page is admin-only.
-// Runs before anything else on the page.
 // ---------------------------------------------------------------------
 function enforceAdminAccess() {
   const loggedIn = typeof isLoggedIn === "function" && isLoggedIn();
@@ -54,7 +57,9 @@ function enforceAdminAccess() {
     $("openAddBtn").style.display = "none";
     document.querySelector(".admin-table-wrap").style.display = "none";
     setTimeout(() => {
-      window.location.href = loggedIn ? "../../index.html" : "../auth/login.html";
+      window.location.href = loggedIn
+        ? "../../index.html"
+        : "../auth/login.html";
     }, 1800);
     return false;
   }
@@ -85,18 +90,21 @@ async function loadProducts() {
 
 function renderTable() {
   if (allProducts.length === 0) {
-    $("productTableBody").innerHTML = `<tr><td colspan="6" class="empty-row">No products yet. Add your first one.</td></tr>`;
+    $("productTableBody").innerHTML =
+      `<tr><td colspan="6" class="empty-row">No products yet. Add your first one.</td></tr>`;
     return;
   }
 
-  $("productTableBody").innerHTML = allProducts.map((p) => {
-    const thumb = (p.images && p.images.length && p.images[0].url)
-      ? `<img class="row-thumb" src="${p.images[0].url}" alt="${p.name}" />`
-      : `<div class="row-thumb-placeholder"></div>`;
+  $("productTableBody").innerHTML = allProducts
+    .map((p) => {
+      const thumb =
+        p.images && p.images.length && p.images[0].url
+          ? `<img class="row-thumb" src="${p.images[0].url}" alt="${p.name}" />`
+          : `<div class="row-thumb-placeholder"></div>`;
 
-    const stockClass = p.quantity <= 5 ? "low" : "ok";
+      const stockClass = p.quantity <= 5 ? "low" : "ok";
 
-    return `
+      return `
       <tr data-id="${p._id}">
         <td class="col-img">${thumb}</td>
         <td>${p.name}</td>
@@ -114,7 +122,8 @@ function renderTable() {
           </div>
         </td>
       </tr>`;
-  }).join("");
+    })
+    .join("");
 
   document.querySelectorAll(".edit-btn").forEach((btn) => {
     btn.addEventListener("click", () => openEditModal(btn.dataset.id));
@@ -138,7 +147,11 @@ function validateField(field) {
     case "price":
       return value !== "" && Number(value) >= 0 ? "" : "Enter a valid price";
     case "quantity":
-      return value !== "" && Number.isInteger(Number(value)) && Number(value) >= 0 ? "" : "Enter a valid quantity";
+      return value !== "" &&
+        Number.isInteger(Number(value)) &&
+        Number(value) >= 0
+        ? ""
+        : "Enter a valid quantity";
     case "category":
       return value ? "" : "Choose a category";
     case "description":
@@ -215,9 +228,13 @@ function resetForm() {
   $("productId").value = "";
   formFields.forEach((f) => {
     touched[f] = false;
-    document.querySelector(`.field[data-field="${f}"]`).classList.remove("error");
+    document
+      .querySelector(`.field[data-field="${f}"]`)
+      .classList.remove("error");
   });
-  document.querySelector('.field[data-field="images"]').classList.remove("error");
+  document
+    .querySelector('.field[data-field="images"]')
+    .classList.remove("error");
   hideFormError();
 }
 
@@ -268,7 +285,9 @@ function setSaving(isSaving) {
   $("saveBtn").disabled = isSaving;
   $("saveBtnLabel").textContent = isSaving
     ? "Saving..."
-    : (editingId ? "Save changes" : "Save product");
+    : editingId
+      ? "Save changes"
+      : "Save product";
 }
 
 $("productForm").addEventListener("submit", async (e) => {
@@ -300,7 +319,10 @@ $("productForm").addEventListener("submit", async (e) => {
 
   try {
     if (editingId) {
-      await authFetch(`/products/${editingId}`, { method: "PUT", body: formData });
+      await authFetch(`/products/${editingId}`, {
+        method: "PUT",
+        body: formData,
+      });
       showToast("Product updated");
     } else {
       await authFetch("/products", { method: "POST", body: formData });

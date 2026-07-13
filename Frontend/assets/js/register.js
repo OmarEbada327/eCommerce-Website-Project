@@ -1,5 +1,3 @@
-// Base URL for API communications
-
 // DOM element references and configuration
 const form = document.getElementById("registerForm");
 const fields = ["name", "email", "phone", "password", "confirmPassword"];
@@ -14,16 +12,22 @@ function validate(field, value) {
       return value.trim().length >= 2 ? "" : "Enter at least 2 characters";
     case "email":
       // Validates standard email formats using RegExp
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "" : "Enter a valid email address";
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+        ? ""
+        : "Enter a valid email address";
     case "phone":
       // Validates that the value matches a standard Egyptian phone number after removing spaces/dashes
-      return /^01[0125][0-9]{8}$/.test(value.replace(/[\s-]/g, "")) ? "" : "Enter a valid Egyptian phone number (e.g. 01012345678)";
+      return /^01[0125][0-9]{8}$/.test(value.replace(/[\s-]/g, ""))
+        ? ""
+        : "Enter a valid Egyptian phone number (e.g. 01012345678)";
     case "password":
       // Validates minimum password length constraint
       return value.length >= 6 ? "" : "Use at least 6 characters";
     case "confirmPassword":
       // Validates that the confirmation field matches the original password input field value
-      return value === document.getElementById("password").value ? "" : "Passwords don't match";
+      return value === document.getElementById("password").value
+        ? ""
+        : "Passwords don't match";
     default:
       return "";
   }
@@ -78,10 +82,10 @@ document.querySelectorAll(".toggle-btn").forEach((btn) => {
     const targetId = btn.getAttribute("data-toggle");
     const input = document.getElementById(targetId);
     if (!input) return;
-    
+
     const isHidden = input.type === "password";
     input.type = isHidden ? "text" : "password";
-    
+
     if (isHidden) {
       // SVG configuration for hidden password status (crossed-eye icon view)
       btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -128,8 +132,12 @@ function friendlyError(rawMessage) {
 // Manages button text strings, arrow indicators, and disabled attributes during submission cycles
 function setSubmitting(isSubmitting) {
   const btn = document.getElementById("submitBtn");
-  document.getElementById("submitLabel").textContent = isSubmitting ? "Creating account..." : "Create account";
-  document.getElementById("submitArrow").style.display = isSubmitting ? "none" : "inline-block";
+  document.getElementById("submitLabel").textContent = isSubmitting
+    ? "Creating account..."
+    : "Create account";
+  document.getElementById("submitArrow").style.display = isSubmitting
+    ? "none"
+    : "inline-block";
   btn.disabled = isSubmitting;
 }
 
@@ -139,7 +147,7 @@ form.addEventListener("submit", async (e) => {
 
   // Force all fields to be marked as touched when clicking create account
   fields.forEach((f) => (touched[f] = true));
-  
+
   // Validate and render error UI for everything immediately
   const errors = fields.map((f) => renderFieldState(f));
 
@@ -182,7 +190,9 @@ form.addEventListener("submit", async (e) => {
 
     // Apply error container status highlight specifically to the email block if designated
     if (err.message && err.message.includes("email")) {
-      document.querySelector('.field[data-field="email"]').classList.add("error");
+      document
+        .querySelector('.field[data-field="email"]')
+        .classList.add("error");
     }
   } finally {
     // Terminate submission cycle status states

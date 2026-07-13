@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Orders — SILICON HOUSE</title>
+    <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/register.css">
     <link rel="stylesheet" href="../../assets/css/admin-products.css">
     <link rel="stylesheet" href="../../assets/css/admin-orders.css">
 </head>
+
 <body>
     <header class="admin-nav">
         <div class="admin-nav-inner">
             <a href="../../index.html" class="brand" aria-label="Silicon House home">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2"
+                    aria-hidden="true">
+                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                    <rect x="9" y="9" width="6" height="6" />
+                    <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
+                </svg>
                 <span>SILICON&nbsp;HOUSE</span>
             </a>
             <span class="admin-badge">ADMIN</span>
@@ -28,10 +38,15 @@
     <main class="admin-shell">
         <div class="admin-shell-inner">
             <div class="admin-header">
-                <div><h1>Orders</h1><p class="admin-sub">Review customer orders and keep fulfilment on track.</p></div>
+                <div>
+                    <h1>Orders</h1>
+                    <p class="admin-sub">Review customer orders and keep fulfilment on track.</p>
+                </div>
                 <button id="refreshOrdersBtn" class="btn-ghost-small" type="button">Refresh</button>
             </div>
-            <div id="accessNotice" class="access-notice hidden"><p>You need an admin account to view this page.</p></div>
+            <div id="accessNotice" class="access-notice hidden">
+                <p>You need an admin account to view this page.</p>
+            </div>
             <section id="ordersWorkspace" class="orders-workspace">
                 <div class="order-summary" aria-live="polite">
                     <div><span id="totalOrders">0</span><small>All orders</small></div>
@@ -39,11 +54,37 @@
                     <div><span id="shippedOrders">0</span><small>In delivery</small></div>
                 </div>
                 <div class="order-toolbar">
-                    <input id="orderSearch" type="search" placeholder="Search order, customer, email…" aria-label="Search orders">
-                    <select id="statusFilter" aria-label="Filter by status"><option value="">All statuses</option><option value="pending">Pending</option><option value="processing">Processing</option><option value="shipped">Shipped</option><option value="delivered">Delivered</option><option value="cancelled">Cancelled</option></select>
+                    <input id="orderSearch" type="search" placeholder="Search order, customer, email…"
+                        aria-label="Search orders">
+                    <select id="statusFilter" aria-label="Filter by status">
+                        <option value="">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
                 </div>
                 <div id="ordersError" class="access-notice hidden" role="alert"></div>
-                <div class="admin-table-wrap"><table class="admin-table orders-table"><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th class="col-num">Total</th><th>Status</th><th>Update</th></tr></thead><tbody id="ordersTableBody"><tr><td colspan="6" class="loading-row">Loading orders…</td></tr></tbody></table></div>
+                <div class="admin-table-wrap">
+                    <table class="admin-table orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th class="col-num">Total</th>
+                                <th>Status</th>
+                                <th>Update</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <tr>
+                                <td colspan="6" class="loading-row">Loading orders…</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
         </div>
     </main>
@@ -52,4 +93,5 @@
     <script src="../../assets/js/auth.js"></script>
     <script src="../../assets/js/admin-orders.js"></script>
 </body>
+
 </html>

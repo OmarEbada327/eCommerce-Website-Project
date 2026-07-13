@@ -5,7 +5,7 @@ let cartData = { products: [] };
 let selectedQty = 1;
 
 // ---------------------------------------------------------------------
-// Helpers 
+// Helpers
 // ---------------------------------------------------------------------
 function showToast(message) {
   const toast = $("toast");
@@ -15,7 +15,9 @@ function showToast(message) {
 }
 
 function money(n) {
-  return "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 });
+  return (
+    "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
+  );
 }
 
 function unwrap(payload) {
@@ -39,7 +41,7 @@ async function checkApiStatus(reachable) {
 }
 
 // ---------------------------------------------------------------------
-// Auth UI 
+// Auth UI
 // ---------------------------------------------------------------------
 function updateAuthUI() {
   const loggedIn = isLoggedIn();
@@ -50,7 +52,8 @@ function updateAuthUI() {
 
   if (loggedIn && user) {
     $("userGreeting").textContent = `Hi, ${user.name}`;
-    $("adminLink").style.display = user.role === "admins" ? "inline-block" : "none";
+    $("adminLink").style.display =
+      user.role === "admins" ? "inline-block" : "none";
   }
 }
 
@@ -99,7 +102,8 @@ function showErrorState() {
 }
 
 function renderProduct() {
-  const images = (product.images && product.images.length) ? product.images : [{ url: "" }];
+  const images =
+    product.images && product.images.length ? product.images : [{ url: "" }];
 
   document.title = `${product.name} — SILICON HOUSE`;
   $("breadcrumbCategory").textContent = product.category;
@@ -107,14 +111,19 @@ function renderProduct() {
   $("mainImage").src = images[0].url;
   $("mainImage").alt = product.name;
 
-  $("pdThumbs").innerHTML = images.map((img, i) =>
-    `<img src="${img.url}" data-idx="${i}" class="${i === 0 ? "active" : ""}" alt="${product.name} ${i + 1}" />`
-  ).join("");
+  $("pdThumbs").innerHTML = images
+    .map(
+      (img, i) =>
+        `<img src="${img.url}" data-idx="${i}" class="${i === 0 ? "active" : ""}" alt="${product.name} ${i + 1}" />`,
+    )
+    .join("");
 
   document.querySelectorAll(".pd-thumbs img").forEach((thumb) => {
     thumb.addEventListener("click", () => {
       $("mainImage").src = thumb.src;
-      document.querySelectorAll(".pd-thumbs img").forEach((t) => t.classList.remove("active"));
+      document
+        .querySelectorAll(".pd-thumbs img")
+        .forEach((t) => t.classList.remove("active"));
       thumb.classList.add("active");
     });
   });
@@ -186,7 +195,7 @@ $("addToCartBtn").addEventListener("click", async () => {
 });
 
 // ---------------------------------------------------------------------
-// Cart drawer 
+// Cart drawer
 // ---------------------------------------------------------------------
 async function loadCart() {
   if (!isLoggedIn()) return;
@@ -204,7 +213,6 @@ function updateCartUI() {
   const items = cartData.products || [];
   $("cartCount").textContent = items.reduce((sum, i) => sum + i.quantity, 0);
 }
-
 
 loadProduct();
 

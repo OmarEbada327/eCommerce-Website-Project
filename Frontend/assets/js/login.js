@@ -1,5 +1,3 @@
-// Base URL for API communications
-
 // DOM element references
 const form = document.getElementById("loginForm");
 const fields = ["email", "password"];
@@ -13,7 +11,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const emailInput = document.getElementById("email");
     emailInput.value = savedEmail;
     document.getElementById("rememberMe").checked = true;
-    
+
     touched["email"] = true;
     renderFieldState("email");
   }
@@ -24,7 +22,9 @@ function validate(field, value) {
   switch (field) {
     case "email":
       // Validates standard email formats using RegExp
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? "" : "Enter a valid email address";
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+        ? ""
+        : "Enter a valid email address";
     case "password":
       // Validates that the password field is not empty
       return value.length > 0 ? "" : "Enter your password";
@@ -80,9 +80,9 @@ document.querySelectorAll(".toggle-btn").forEach((btn) => {
     const targetId = btn.getAttribute("data-toggle");
     const input = document.getElementById(targetId);
     const isHidden = input.type === "password";
-    
+
     input.type = isHidden ? "text" : "password";
-    
+
     if (isHidden) {
       // SVG configuration for hidden password status (crossed-eye icon view)
       btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -126,8 +126,12 @@ function friendlyError(rawMessage) {
 // Manages button text strings, arrow indicators, and disabled attributes during submission cycles
 function setSubmitting(isSubmitting) {
   const btn = document.getElementById("submitBtn");
-  document.getElementById("submitLabel").textContent = isSubmitting ? "Signing in..." : "Sign in";
-  document.getElementById("submitArrow").style.display = isSubmitting ? "none" : "inline-block";
+  document.getElementById("submitLabel").textContent = isSubmitting
+    ? "Signing in..."
+    : "Sign in";
+  document.getElementById("submitArrow").style.display = isSubmitting
+    ? "none"
+    : "inline-block";
   btn.disabled = isSubmitting;
 }
 
@@ -166,7 +170,10 @@ form.addEventListener("submit", async (e) => {
     // Handle "Remember Me" preferences state validation
     const rememberMeCheckbox = document.getElementById("rememberMe");
     if (rememberMeCheckbox.checked) {
-      localStorage.setItem("silicon_house_remembered_email", document.getElementById("email").value);
+      localStorage.setItem(
+        "silicon_house_remembered_email",
+        document.getElementById("email").value,
+      );
     } else {
       localStorage.removeItem("silicon_house_remembered_email");
     }
@@ -176,7 +183,9 @@ form.addEventListener("submit", async (e) => {
   } catch (err) {
     // Render errors to the client UI layout
     showServerError(friendlyError(err.message));
-    document.querySelector('.field[data-field="password"]').classList.add("error");
+    document
+      .querySelector('.field[data-field="password"]')
+      .classList.add("error");
   } finally {
     // Terminate submission cycle status states
     setSubmitting(false);

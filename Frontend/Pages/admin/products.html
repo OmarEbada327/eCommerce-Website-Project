@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin — Products — SILICON HOUSE</title>
 
+    <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet" />
 
     <link rel="stylesheet" href="../../assets/css/register.css">
     <link rel="stylesheet" href="../../assets/css/admin-products.css">
 </head>
+
 <body>
 
     <header class="admin-nav">
         <div class="admin-nav-inner">
             <a href="../../index.html" class="brand">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8742E" stroke-width="2">
-                    <rect x="4" y="4" width="16" height="16" rx="2" /><rect x="9" y="9" width="6" height="6" />
+                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                    <rect x="9" y="9" width="6" height="6" />
                     <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
                 </svg>
                 <span>SILICON&nbsp;HOUSE</span>
@@ -59,7 +65,9 @@
                         </tr>
                     </thead>
                     <tbody id="productTableBody">
-                        <tr><td colspan="6" class="loading-row">Loading products...</td></tr>
+                        <tr>
+                            <td colspan="6" class="loading-row">Loading products...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -138,7 +146,11 @@
                 </div>
 
                 <div id="formError" class="server-error">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
                     <span id="formErrorText"></span>
                 </div>
 
@@ -170,4 +182,5 @@
     <script src="../../assets/js/auth.js"></script>
     <script src="../../assets/js/admin-products.js"></script>
 </body>
+
 </html>

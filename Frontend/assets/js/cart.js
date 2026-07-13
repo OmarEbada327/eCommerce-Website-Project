@@ -6,7 +6,7 @@ let lastChangedPid = null;
 let cartBusy = false;
 
 // ---------------------------------------------------------------------
-// Cart is an authenticated-only page 
+// Cart is an authenticated-only page
 // ---------------------------------------------------------------------
 if (typeof isLoggedIn !== "function" || !isLoggedIn()) {
   window.location.href = "auth/login.html";
@@ -23,7 +23,9 @@ function showToast(message) {
 }
 
 function money(n) {
-  return "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 });
+  return (
+    "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
+  );
 }
 
 function unwrap(payload) {
@@ -40,8 +42,11 @@ function mergeProductDetails(newCartData) {
   if (!newCartData?.products || !cartData?.products) return newCartData;
   newCartData.products.forEach((newItem) => {
     if (typeof newItem.productId !== "string") return;
-    const oldItem = cartData.products.find((old) => pidOf(old) === newItem.productId);
-    if (oldItem && typeof oldItem.productId === "object") newItem.productId = oldItem.productId;
+    const oldItem = cartData.products.find(
+      (old) => pidOf(old) === newItem.productId,
+    );
+    if (oldItem && typeof oldItem.productId === "object")
+      newItem.productId = oldItem.productId;
   });
   return newCartData;
 }
@@ -53,7 +58,7 @@ async function checkApiStatus(reachable) {
 }
 
 // ---------------------------------------------------------------------
-// Auth UI 
+// Auth UI
 // ---------------------------------------------------------------------
 function updateAuthUI() {
   const loggedIn = isLoggedIn();
@@ -64,7 +69,8 @@ function updateAuthUI() {
 
   if (loggedIn && user) {
     $("userGreeting").textContent = `Hi, ${user.name}`;
-    $("adminLink").style.display = user.role === "admins" ? "inline-block" : "none";
+    $("adminLink").style.display =
+      user.role === "admins" ? "inline-block" : "none";
   }
 }
 
@@ -86,13 +92,17 @@ async function loadCart() {
     checkApiStatus(false);
     $("cartLoadingState").classList.add("hidden");
     $("cartEmptyState").classList.remove("hidden");
-    $("cartEmptyState").querySelector(".empty-title").textContent = "Couldn't load your cart";
-    $("cartEmptyState").querySelector(".empty-sub").textContent = "Check your connection and try refreshing.";
+    $("cartEmptyState").querySelector(".empty-title").textContent =
+      "Couldn't load your cart";
+    $("cartEmptyState").querySelector(".empty-sub").textContent =
+      "Check your connection and try refreshing.";
   }
 }
 
 function pidOf(item) {
-  return item.productId && item.productId._id ? item.productId._id : item.productId;
+  return item.productId && item.productId._id
+    ? item.productId._id
+    : item.productId;
 }
 
 function renderCart() {
@@ -108,22 +118,31 @@ function renderCart() {
 
   $("cartEmptyState").classList.add("hidden");
   $("cartGrid").classList.remove("hidden");
-  $("cartItemCount").textContent = `${items.length} item${items.length === 1 ? "" : "s"}`;
+  $("cartItemCount").textContent =
+    `${items.length} item${items.length === 1 ? "" : "s"}`;
 
   let subtotal = 0;
-  $("cartItemsList").innerHTML = items.map((item) => {
-    const product = item.productId && item.productId.name ? item.productId : null;
-    const pid = pidOf(item);
-    const name = product ? product.name : "Product";
-    const category = product ? product.category : "";
-    const unitPrice = product ? product.price : (item.totalPrice / item.quantity);
-    const thumb = (product && product.images && product.images.length && product.images[0].url)
-      ? `<img class="cart-row-thumb" src="${escapeHTML(product.images[0].url)}" alt="${escapeHTML(name)}" />`
-      : `<div class="cart-row-thumb-placeholder"></div>`;
+  $("cartItemsList").innerHTML = items
+    .map((item) => {
+      const product =
+        item.productId && item.productId.name ? item.productId : null;
+      const pid = pidOf(item);
+      const name = product ? product.name : "Product";
+      const category = product ? product.category : "";
+      const unitPrice = product
+        ? product.price
+        : item.totalPrice / item.quantity;
+      const thumb =
+        product &&
+        product.images &&
+        product.images.length &&
+        product.images[0].url
+          ? `<img class="cart-row-thumb" src="${escapeHTML(product.images[0].url)}" alt="${escapeHTML(name)}" />`
+          : `<div class="cart-row-thumb-placeholder"></div>`;
 
-    subtotal += item.totalPrice;
+      subtotal += item.totalPrice;
 
-    return `
+      return `
       <div class="cart-row${pid === lastChangedPid ? " qty-pulse" : ""}" data-pid="${escapeHTML(pid)}" data-name="${escapeHTML(name)}">
         ${thumb}
         <div class="cart-row-info">
@@ -143,23 +162,30 @@ function renderCart() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
       </div>`;
-  }).join("");
+    })
+    .join("");
 
   $("cartSubtotal").textContent = money(subtotal);
   $("cartGrandTotal").textContent = money(subtotal);
 
   if (lastChangedPid) {
     setTimeout(() => {
-      document.querySelectorAll(".cart-row.qty-pulse").forEach((el) => el.classList.remove("qty-pulse"));
+      document
+        .querySelectorAll(".cart-row.qty-pulse")
+        .forEach((el) => el.classList.remove("qty-pulse"));
     }, 500);
     lastChangedPid = null;
   }
 
   document.querySelectorAll(".qty-inc").forEach((btn) => {
-    btn.addEventListener("click", () => changeQty(btn.closest(".cart-row").dataset.pid, 1));
+    btn.addEventListener("click", () =>
+      changeQty(btn.closest(".cart-row").dataset.pid, 1),
+    );
   });
   document.querySelectorAll(".qty-dec").forEach((btn) => {
-    btn.addEventListener("click", () => changeQty(btn.closest(".cart-row").dataset.pid, -1));
+    btn.addEventListener("click", () =>
+      changeQty(btn.closest(".cart-row").dataset.pid, -1),
+    );
   });
   document.querySelectorAll(".cart-row-remove").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -203,7 +229,7 @@ async function changeQty(productId, delta) {
 }
 
 // ---------------------------------------------------------------------
-// Remove item — with confirmation + fade-out animation
+// Remove item
 // ---------------------------------------------------------------------
 function openRemoveModal(productId, name) {
   pendingRemovePid = productId;

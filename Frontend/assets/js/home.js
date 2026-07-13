@@ -1,5 +1,3 @@
-// Base URL configuration for communicating with the backend API
-
 // Short helper utility to target and retrieve DOM elements by their unique IDs
 const $ = (id) => document.getElementById(id);
 
@@ -19,7 +17,9 @@ function showToast(message) {
 
 // Formats numerical price numbers into a standardized EGP currency string display format
 function money(n) {
-  return "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 });
+  return (
+    "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
+  );
 }
 
 // Extracts data payload blocks safely regardless of the custom server response wrapper format
@@ -48,7 +48,8 @@ function updateAuthUI() {
 
   if (loggedIn && user) {
     $("userGreeting").textContent = `Hi, ${user.name}`;
-    $("adminLink").style.display = user.role === "admins" ? "inline-block" : "none";
+    $("adminLink").style.display =
+      user.role === "admins" ? "inline-block" : "none";
   }
 }
 
@@ -83,7 +84,8 @@ async function loadProducts() {
     renderProducts();
   } catch (err) {
     checkApiStatus(false);
-    $("productGrid").innerHTML = `<p class="empty-msg">Couldn't reach the backend. Is it running at ${window.SiliconHouseApi.baseUrl}?</p>`;
+    $("productGrid").innerHTML =
+      `<p class="empty-msg">Couldn't reach the backend. Is it running at ${window.SiliconHouseApi.baseUrl}?</p>`;
   }
 }
 
@@ -101,7 +103,9 @@ function renderProducts() {
     list = list.filter((p) => p.name.toLowerCase().includes(q));
   }
 
-  $("catalogTitle").textContent = activeCategory ? activeCategory : "All products";
+  $("catalogTitle").textContent = activeCategory
+    ? activeCategory
+    : "All products";
 
   // Display empty matching fallback notices if zero inventory listings conform to constraints
   if (list.length === 0) {
@@ -110,13 +114,15 @@ function renderProducts() {
   }
 
   // Construct markup templates and inject them directly inside the catalog inner bounds
-  $("productGrid").innerHTML = list.map((p) => {
-    const images = (p.images && p.images.length) ? p.images : [{ url: "" }];
-    const dots = images.length > 1
-      ? `<div class="img-dots">${images.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("")}</div>`
-      : "";
+  $("productGrid").innerHTML = list
+    .map((p) => {
+      const images = p.images && p.images.length ? p.images : [{ url: "" }];
+      const dots =
+        images.length > 1
+          ? `<div class="img-dots">${images.map((_, i) => `<span class="${i === 0 ? "active" : ""}"></span>`).join("")}</div>`
+          : "";
 
-    return `
+      return `
       <div class="product-card" data-id="${p._id}">
         <a class="product-card-img" href="pages/product-detail.html?id=${p._id}">
           <img src="${images[0].url}" alt="${p.name}" data-idx="0" />
@@ -132,7 +138,8 @@ function renderProducts() {
           <button class="add-to-cart-btn" data-id="${p._id}">+</button>
         </div>
       </div>`;
-  }).join("");
+    })
+    .join("");
 
   // Binds submission add actions across the dynamic cart button grids
   document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
@@ -148,7 +155,9 @@ document.querySelectorAll(".category-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
     activeCategory = link.dataset.category;
-    document.querySelectorAll(".category-nav a").forEach((l) => l.classList.remove("active"));
+    document
+      .querySelectorAll(".category-nav a")
+      .forEach((l) => l.classList.remove("active"));
     link.classList.add("active");
     renderProducts();
   });
@@ -194,7 +203,6 @@ async function loadCart() {
   }
 }
 
-
 // Keeps the header cart-count badge in sync with the server's cart state.
 // Full cart contents now live on their own page (pages/cart.html).
 function updateCartUI() {
@@ -214,5 +222,7 @@ if (typeof isLoggedIn === "function") {
     console.error("Auth check failed:", err);
   }
 } else {
-  console.error("auth.js did not load — check the <script> tag and file path in index.html");
+  console.error(
+    "auth.js did not load — check the <script> tag and file path in index.html",
+  );
 }
