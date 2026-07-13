@@ -197,110 +197,13 @@ async function loadCart() {
   }
 }
 
-// Scans local collection states to map matching object entities according to standard query ids
-function findLocalProduct(id) {
-  return allProducts.find((p) => p._id === id);
-}
 
-// Redraws the layout parameters inside cart slide out layouts and computes summary totals
+// Keeps the header cart-count badge in sync with the server's cart state.
+// Full cart contents now live on their own page (pages/cart.html).
 function updateCartUI() {
   const items = cartData.products || [];
   $("cartCount").textContent = items.reduce((sum, i) => sum + i.quantity, 0);
-
-  if (items.length === 0) {
-    $("cartItems").innerHTML = `<p class="cart-empty">Cart is empty.</p>`;
-    $("cartTotal").textContent = money(0);
-    return;
-  }
-
-  let total = 0;
-  $("cartItems").innerHTML = items.map((item) => {
-    const pid = item.productId && item.productId._id ? item.productId._id : item.productId;
-    const product = (item.productId && item.productId.name) ? item.productId : findLocalProduct(pid);
-    const name = product ? product.name : "Product";
-    total += item.totalPrice;
-
-    return `
-      <div class="cart-line" data-pid="${pid}">
-        <div class="cart-line-top"><span>${name}</span><span>${money(item.totalPrice)}</span></div>
-        <div class="cart-line-qty">
-          <div class="qty-stepper">
-            <button class="qty-dec">-</button>
-            <span>${item.quantity}</span>
-            <button class="qty-inc">+</button>
-          </div>
-          <button class="remove-line-btn">Remove</button>
-        </div>
-      </div>`;
-  }).join("");
-  $("cartTotal").textContent = money(total);
-
-  // Wire increment actions across line items within cart drawers
-  document.querySelectorAll(".qty-inc").forEach((btn) => {
-    btn.addEventListener("click", () => changeQty(btn.closest(".cart-line").dataset.pid, 1));
-  });
-  // Wire decrement actions across line items within cart drawers
-  document.querySelectorAll(".qty-dec").forEach((btn) => {
-    btn.addEventListener("click", () => changeQty(btn.closest(".cart-line").dataset.pid, -1));
-  });
-  // Wire delete item removal actions inside line layout nodes
-  document.querySelectorAll(".remove-line-btn").forEach((btn) => {
-    btn.addEventListener("click", () => removeLine(btn.closest(".cart-line").dataset.pid));
-  });
 }
-
-// Requests line configuration adjustment updates for existing line elements inside cart records
-async function changeQty(productId, delta) {
-  const item = cartData.products.find((i) => {
-    const pid = i.productId && i.productId._id ? i.productId._id : i.productId;
-    return pid === productId;
-  });
-  const newQty = (item ? item.quantity : 0) + delta;
-  if (newQty <= 0) return removeLine(productId);
-
-  try {
-    const payload = await authFetch("/cart", {
-      method: "PUT",
-      body: JSON.stringify({ productId, quantity: newQty }),
-    });
-    cartData = unwrap(payload);
-    updateCartUI();
-  } catch (err) {
-    showToast(err.message);
-  }
-}
-
-// Sends line omission command pipelines down to backend persistent state nodes
-async function removeLine(productId) {
-  try {
-    const payload = await authFetch("/cart/" + productId, { method: "DELETE" });
-    cartData = unwrap(payload);
-    updateCartUI();
-  } catch (err) {
-    showToast(err.message);
-  }
-}
-
-// Opens the sliding layout pane to render cart contents
-$("cartBtn").addEventListener("click", () => {
-  $("cartOverlay").classList.add("open");
-  loadCart();
-});
-// Closes the sliding layout pane to dismiss cart visibility
-$("cartClose").addEventListener("click", () => $("cartOverlay").classList.remove("open"));
-// Monitors background structural bounds to support overlay backdrop dismiss options
-$("cartOverlay").addEventListener("click", (e) => {
-  if (e.target.id === "cartOverlay") $("cartOverlay").classList.remove("open");
-});
-
-// Validates cart balances prior to sending operations further down to final checkouts
-$("checkoutBtn").addEventListener("click", () => {
-  if (cartData.products.length === 0) {
-    showToast("Your cart is empty");
-    return;
-  }
-  window.location.href = "pages/checkout.html";
-});
 
 // Kickstart data ingestion tasks on compilation cycles
 loadProducts();

@@ -78,27 +78,27 @@
                 <input type="hidden" id="productId" value="" />
 
                 <div class="field" data-field="name">
-                    <label>Product name</label>
+                    <label for="name">Product name</label>
                     <input type="text" id="name" placeholder="AMD Ryzen 7 9800X3D" />
                     <div class="field-error">Enter a product name</div>
                 </div>
 
                 <div class="field-row">
                     <div class="field" data-field="price">
-                        <label>Price (EGP)</label>
+                        <label for="price">Price (EGP)</label>
                         <input type="number" id="price" min="0" step="1" placeholder="24999" />
                         <div class="field-error">Enter a valid price</div>
                     </div>
                     <div class="field" data-field="quantity">
-                        <label>Stock quantity</label>
+                        <label for="quantity">Stock quantity</label>
                         <input type="number" id="quantity" min="0" step="1" placeholder="10" />
                         <div class="field-error">Enter a valid quantity</div>
                     </div>
                 </div>
 
                 <div class="field" data-field="category">
-                    <label>Category</label>
-                    <select id="category">
+                    <label for="category">Category</label>
+                    <select id="category" title="Category">
                         <option value="">Select a category</option>
                         <option value="CPU">CPU</option>
                         <option value="GPU">GPU</option>
@@ -111,13 +111,13 @@
                 </div>
 
                 <div class="field" data-field="description">
-                    <label>Description</label>
+                    <label for="description">Description</label>
                     <textarea id="description" rows="4" placeholder="Full product description..."></textarea>
                     <div class="field-error">Enter a description</div>
                 </div>
 
                 <div class="field" data-field="images">
-                    <label id="imagesLabel">Images (up to 5)</label>
+                    <label id="imagesLabel" for="images">Images (up to 5)</label>
                     <input type="file" id="images" accept="image/png,image/jpeg,image/webp" multiple />
                     <div class="field-error">At least one image is required</div>
                     <div id="existingImagesNote" class="existing-images-note hidden">
