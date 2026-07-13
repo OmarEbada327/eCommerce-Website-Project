@@ -1,9 +1,7 @@
 const API_BASE = "http://localhost:3000";
 const $ = (id) => document.getElementById(id);
 
-// Must match what the backend actually accepts (uploadMiddleware.js /
-// multer-storage-cloudinary's allowedFormats), so bad files get stopped
-// here instead of round-tripping to the server first.
+
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_IMAGE_COUNT = 5;
@@ -13,7 +11,7 @@ let editingId = null; // null = create mode, otherwise the product's _id
 let deleteTargetId = null;
 
 // ---------------------------------------------------------------------
-// Helpers (same patterns used across the other pages)
+// Helpers 
 // ---------------------------------------------------------------------
 function showToast(message) {
   const toast = $("toast");

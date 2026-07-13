@@ -1,15 +1,3 @@
-// ---------------------------------------------------------------------
-// auth.js — shared session helpers, used by every page that needs to
-// know whether someone is signed in, or needs to send their token.
-//
-// "Remember me" checked  -> localStorage   (survives closing the browser)
-// "Remember me" unchecked -> sessionStorage (cleared when the tab closes)
-//
-// Every other page should read the session through getToken()/getUser()
-// below, rather than calling localStorage/sessionStorage directly —
-// that way, if this logic ever changes, it only changes in one place.
-// ---------------------------------------------------------------------
-
 function saveSession(token, user, remember) {
   const activeStorage = remember ? localStorage : sessionStorage;
   const otherStorage = remember ? sessionStorage : localStorage;
