@@ -160,8 +160,10 @@ async function changeQty(productId, delta) {
   const item = cartData.products.find((i) => pidOf(i) === productId);
   const newQty = (item ? item.quantity : 0) + delta;
 
+  const row = document.querySelector(`.cart-row[data-pid="${productId}"]`);
+
   if (newQty <= 0) {
-    openRemoveModal(productId, item && item.productId && item.productId.name ? item.productId.name : "this item");
+    openRemoveModal(productId, row ? row.dataset.name : "this item");
     return;
   }
 
@@ -170,7 +172,21 @@ async function changeQty(productId, delta) {
       method: "PUT",
       body: JSON.stringify({ productId, quantity: newQty }),
     });
-    cartData = unwrap(payload);
+    const newCartData = unwrap(payload);
+
+    // The PUT response returns an unpopulated cart. We merge the old product
+    // details into the new cart data to preserve names, images, etc.
+    if (newCartData && newCartData.products && cartData && cartData.products) {
+      newCartData.products.forEach(newItem => {
+        if (typeof newItem.productId === 'string') {
+          const oldItem = cartData.products.find(old => pidOf(old) === newItem.productId);
+          if (oldItem && typeof oldItem.productId === 'object') {
+            newItem.productId = oldItem.productId;
+          }
+        }
+      });
+    }
+    cartData = newCartData;
     lastChangedPid = productId;
     renderCart();
   } catch (err) {
@@ -208,7 +224,21 @@ $("confirmRemoveBtn").addEventListener("click", async () => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 220)); // let the fade-out play
     const payload = await authFetch("/cart/" + pid, { method: "DELETE" });
-    cartData = unwrap(payload);
+    const newCartData = unwrap(payload);
+
+    // Same as with quantity changes, the DELETE response returns an unpopulated
+    // cart. We merge the old product details back in to keep names/images.
+    if (newCartData && newCartData.products && cartData && cartData.products) {
+      newCartData.products.forEach(newItem => {
+        if (typeof newItem.productId === 'string') {
+          const oldItem = cartData.products.find(old => pidOf(old) === newItem.productId);
+          if (oldItem && typeof oldItem.productId === 'object') {
+            newItem.productId = oldItem.productId;
+          }
+        }
+      });
+    }
+    cartData = newCartData;
     renderCart();
     showToast("Item removed");
   } catch (err) {
