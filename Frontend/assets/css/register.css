@@ -62,7 +62,7 @@ body {
 }
 
 /* Sidebar Brand Identity Layout */
-.brand {
+.brand-auth {
   display: flex;
   align-items: center;
   gap: 10px;

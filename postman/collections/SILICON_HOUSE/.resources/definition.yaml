@@ -1,6 +1,11 @@
 $kind: collection
 name: SILICON_HOUSE
-description: Full route coverage for the eCommerce backend,Set {{baseUrl}} to your running server (default [http://localhost:3000](http://localhost:3000)). Log in once and the token auto-saves to {{token}} for every protected request.
+description: |-
+  This collection contains the main API requests for the **SILICON_HOUSE** eCommerce system. It is organized into functional areas such as authentication, product management, cart operations, order processing, and user administration, providing a structured way to test and manage both customer-facing and admin-only workflows across the application.
+
+  ---
+
+  Full route coverage for the eCommerce backend,Set {{baseUrl}} to your running server (default [http://localhost:3000](http://localhost:3000)). Log in once and the token auto-saves to {{token}} for every protected request.
 variables:
   baseUrl: ""
   token: ""

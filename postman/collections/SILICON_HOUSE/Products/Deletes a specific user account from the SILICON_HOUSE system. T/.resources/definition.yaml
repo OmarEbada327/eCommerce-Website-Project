@@ -1,0 +1,3 @@
+$kind: collection
+name: Deletes a specific user account from the SILICON_HOUSE system. This admin-only request is intended for user management tasks, allowing authorized administrators to permanently remove user records when necessary.
+order: 4439703834066943

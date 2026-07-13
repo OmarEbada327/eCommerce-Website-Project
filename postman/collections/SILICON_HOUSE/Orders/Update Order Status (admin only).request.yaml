@@ -1,5 +1,6 @@
 $kind: http-request
 name: Update Order Status (admin only)
+description: Updates the status of a specific order in the **SILICON_HOUSE** eCommerce system. This admin-only request is used to manage order processing stages such as pending, shipped, delivered, or canceled, helping administrators track and control fulfillment progress.
 url: "{{baseUrl}}/orders/{{orderId}}/status"
 method: PATCH
 headers:

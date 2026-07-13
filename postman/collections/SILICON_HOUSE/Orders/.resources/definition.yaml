@@ -1,3 +1,4 @@
 $kind: collection
 name: Orders
+description: This folder contains requests for managing order operations in the **SILICON_HOUSE** eCommerce API. It includes endpoints for creating orders through checkout, retrieving order lists and details, canceling orders, and updating order status, supporting both customer purchase flows and administrative order management.
 order: 4425885800202239

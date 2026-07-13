@@ -1,3 +1,4 @@
 $kind: collection
 name: Products
+description: This folder contains requests for managing products in the **SILICON_HOUSE** eCommerce API. It covers product-related operations such as retrieving product lists, viewing product details, and handling product creation, updates, and deletion, supporting both browsing and administrative management workflows.
 order: 1363947589468159

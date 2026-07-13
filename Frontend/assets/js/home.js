@@ -121,38 +121,28 @@ function renderProducts() {
 
     return `
       <div class="product-card" data-id="${p._id}">
-        <div class="product-card-img">
+        <a class="product-card-img" href="pages/product-detail.html?id=${p._id}">
           <img src="${images[0].url}" alt="${p.name}" data-idx="0" />
           ${dots}
-        </div>
-        <div class="product-card-body">
+        </a>
+        <a class="product-card-body" href="pages/product-detail.html?id=${p._id}">
           <span class="product-card-category">${p.category}</span>
           <h3 class="product-card-title">${p.name}</h3>
           ${stockTicksHTML(p.quantity)}
-          <div class="product-card-footer">
-            <div class="product-card-price">${money(p.price)}<small>${p.currency || "EGP"}</small></div>
-            <button class="add-to-cart-btn" data-id="${p._id}">+</button>
-          </div>
+        </a>
+        <div class="product-card-footer">
+          <div class="product-card-price">${money(p.price)}<small>${p.currency || "EGP"}</small></div>
+          <button class="add-to-cart-btn" data-id="${p._id}">+</button>
         </div>
       </div>`;
   }).join("");
 
-  // Binds click interactions to support carousels cycling across available product image panels
-  document.querySelectorAll(".product-card-img img").forEach((img) => {
-    img.addEventListener("click", () => {
-      const card = img.closest(".product-card");
-      const product = list.find((p) => p._id === card.dataset.id);
-      if (!product.images || product.images.length < 2) return;
-      const nextIdx = (parseInt(img.dataset.idx) + 1) % product.images.length;
-      img.src = product.images[nextIdx].url;
-      img.dataset.idx = nextIdx;
-      card.querySelectorAll(".img-dots span").forEach((dot, i) => dot.classList.toggle("active", i === nextIdx));
-    });
-  });
-
   // Binds submission add actions across the dynamic cart button grids
   document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
-    btn.addEventListener("click", () => addToCart(btn.dataset.id));
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      addToCart(btn.dataset.id);
+    });
   });
 }
 
@@ -309,7 +299,7 @@ $("checkoutBtn").addEventListener("click", () => {
     showToast("Your cart is empty");
     return;
   }
-  showToast("Checkout page coming next");
+  window.location.href = "pages/checkout.html";
 });
 
 // Kickstart data ingestion tasks on compilation cycles

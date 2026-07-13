@@ -1,5 +1,6 @@
 $kind: http-request
 name: Checkout
+description: Creates a new order from the authenticated user’s cart in the **SILICON_HOUSE** eCommerce system. This request is used during checkout to finalize the purchase process, converting selected cart items into an order for processing and fulfillment.
 url: "{{baseUrl}}/orders/checkout"
 method: POST
 headers:
@@ -26,9 +27,6 @@ body:
 
     }"
 scripts:
-  - type: beforeRequest
-    code: ""
-    language: text/javascript
   - type: afterResponse
     code: "const data = pm.response.json();\r
 

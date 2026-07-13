@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "4b5e26a2-deda-44dd-818a-151dceada6be",
     "name": "SILICON_HOUSE",
-    "description": "Full route coverage for the eCommerce backend,Set {{baseUrl}} to your running server (default [http://localhost:3000](http://localhost:3000)). Log in once and the token auto-saves to {{token}} for every protected request.",
+    "description": "This collection contains the main API requests for the **SILICON_HOUSE** eCommerce system. It is organized into functional areas such as authentication, product management, cart operations, order processing, and user administration, providing a structured way to test and manage both customer-facing and admin-only workflows across the application.\n\n---\n\nFull route coverage for the eCommerce backend,Set {{baseUrl}} to your running server (default [http://localhost:3000](http://localhost:3000)). Log in once and the token auto-saves to {{token}} for every protected request.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "55885846",
     "_collection_link": "https://go.postman.co/collection/55885846-4b5e26a2-deda-44dd-818a-151dceada6be?source=collection_link"
@@ -156,7 +156,8 @@
                 "users",
                 "profile"
               ]
-            }
+            },
+            "description": "Updates the authenticated user's profile information by sending revised personal details, such as name and phone number, to the `/users/profile` endpoint. This request is intended to let a signed-in user manage and keep their account information up to date."
           },
           "response": []
         },
@@ -174,7 +175,8 @@
                 "users",
                 "{{userId}}"
               ]
-            }
+            },
+            "description": "Deletes a specific user account from the **SILICON_HOUSE** system. This admin-only request is intended for user management tasks, allowing authorized administrators to permanently remove user records when necessary."
           },
           "response": []
         }
@@ -184,6 +186,10 @@
     {
       "name": "Products",
       "item": [
+        {
+          "name": "Deletes a specific user account from the SILICON_HOUSE system. This admin-only request is intended for user management tasks, allowing authorized administrators to permanently remove user records when necessary.",
+          "item": []
+        },
         {
           "name": "Get All Products",
           "request": {
@@ -231,10 +237,20 @@
             {
               "listen": "test",
               "script": {
-                "type": "text/javascript",
                 "exec": [
-                  "let data;\ntry {\n  data = pm.response.json();\n} catch (e) {\n  data = null;\n}\nif (data && data._id) {\n  pm.collectionVariables.set('productId', data._id);\n}"
-                ]
+                  "let data;",
+                  "try {",
+                  "  data = pm.response.json();",
+                  "} catch (e) {",
+                  "  data = null;",
+                  "}",
+                  "if (data && data._id) {",
+                  "  pm.collectionVariables.set('productId', data._id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -277,6 +293,7 @@
                 {
                   "key": "images",
                   "type": "file",
+                  "contentType": "image/jpeg",
                   "src": [
                     "postman-cloud:///1f17b260-482f-4120-b7b4-1ed7fce3e998",
                     "postman-cloud:///1f17b260-47fe-43e0-b528-b1b13e994111",
@@ -350,7 +367,8 @@
           },
           "response": []
         }
-      ]
+      ],
+      "description": "This folder contains requests for managing products in the **SILICON_HOUSE** eCommerce API. It covers product-related operations such as retrieving product lists, viewing product details, and handling product creation, updates, and deletion, supporting both browsing and administrative management workflows."
     },
     {
       "name": "Cart",
@@ -368,7 +386,8 @@
               "path": [
                 "cart"
               ]
-            }
+            },
+            "description": "Retrieves the current authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to view all items currently added to the cart, along with their quantities and related product details, supporting cart review before checkout."
           },
           "response": []
         },
@@ -399,7 +418,8 @@
               "path": [
                 "cart"
               ]
-            }
+            },
+            "description": "Adds a selected product to the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to begin or update the shopping process by placing an item into the cart for future checkout."
           },
           "response": []
         },
@@ -430,7 +450,8 @@
               "path": [
                 "cart"
               ]
-            }
+            },
+            "description": "Updates an existing item in the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is typically used to change the quantity or details of a cart item, helping users manage their selected products before checkout."
           },
           "response": []
         },
@@ -448,7 +469,8 @@
                 "cart",
                 "{{productId}}"
               ]
-            }
+            },
+            "description": "Removes a specific item from the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to manage cart contents by deleting products the user no longer wants before proceeding to checkout."
           },
           "response": []
         },
@@ -465,11 +487,13 @@
               "path": [
                 "cart"
               ]
-            }
+            },
+            "description": "Clears all items from the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to reset the cart completely, removing every selected product before checkout or when starting a new shopping session."
           },
           "response": []
         }
-      ]
+      ],
+      "description": "This folder contains requests for managing shopping cart operations in the **SILICON_HOUSE** eCommerce API. It includes endpoints for viewing cart contents, adding products to the cart, updating item quantities, removing items, and clearing the cart, supporting the full customer cart workflow before checkout."
     },
     {
       "name": "Orders",
@@ -513,7 +537,8 @@
                 "orders",
                 "checkout"
               ]
-            }
+            },
+            "description": "Creates a new order from the authenticated user’s cart in the **SILICON_HOUSE** eCommerce system. This request is used during checkout to finalize the purchase process, converting selected cart items into an order for processing and fulfillment."
           },
           "response": []
         },
@@ -531,7 +556,8 @@
                 "orders",
                 "mine"
               ]
-            }
+            },
+            "description": "Retrieves all orders associated with the authenticated user in the **SILICON_HOUSE** eCommerce system. This request is used to view the user’s order history, track past purchases, and access order-related details for account management."
           },
           "response": []
         },
@@ -549,7 +575,8 @@
                 "orders",
                 "{{orderId}}"
               ]
-            }
+            },
+            "description": "Retrieves the details of a specific order by its unique ID in the **SILICON_HOUSE** eCommerce system. This request is used to view complete information about an individual order, including its items, status, and related purchase details."
           },
           "response": []
         },
@@ -582,7 +609,8 @@
                 "{{orderId}}",
                 "status"
               ]
-            }
+            },
+            "description": "Updates the status of a specific order in the **SILICON_HOUSE** eCommerce system. This admin-only request is used to manage order processing stages such as pending, shipped, delivered, or canceled, helping administrators track and control fulfillment progress."
           },
           "response": []
         },
@@ -601,11 +629,13 @@
                 "{{orderId}}",
                 "cancel"
               ]
-            }
+            },
+            "description": "Cancels a specific order in the **SILICON_HOUSE** eCommerce system. This request is used to stop order processing for an existing purchase, typically before fulfillment is completed, allowing users or authorized roles to manage unwanted or changed orders."
           },
           "response": []
         }
-      ]
+      ],
+      "description": "This folder contains requests for managing order operations in the **SILICON_HOUSE** eCommerce API. It includes endpoints for creating orders through checkout, retrieving order lists and details, canceling orders, and updating order status, supporting both customer purchase flows and administrative order management."
     }
   ],
   "auth": {

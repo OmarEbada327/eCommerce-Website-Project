@@ -1,5 +1,6 @@
 $kind: http-request
 name: Clear Cart
+description: Clears all items from the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to reset the cart completely, removing every selected product before checkout or when starting a new shopping session.
 url: "{{baseUrl}}/cart"
 method: DELETE
 order: 3396917511221868
