@@ -23,7 +23,7 @@ const getMyOrders = async (req, res) => {
 
 const getOrder = async (req, res) => {
     try {
-        const order = await orderService.getOrderById(req.params.id);
+        const order = await orderService.getOrderById(req.params.id, req.user.id);
         res.status(200).json(order);
     }
     catch (err) {
@@ -42,7 +42,7 @@ const updateOrderStatus = async (req, res) => {
 
 const cancelOrder = async (req, res) => {
     try {
-        const order = await orderService.cancelOrder(req.params.id);
+        const order = await orderService.cancelOrder(req.params.id, req.user.id);
         res.status(200).json(order);
     }
     catch (err) {

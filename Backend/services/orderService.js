@@ -34,8 +34,8 @@ const getOrdersByUser = async (userId) => {
     return await Order.find({ user: userId }).populate("products.productId");
 };
 
-const getOrderById = async (orderId) => {
-    const order = await Order.findById(orderId).populate("products.productId");
+const getOrderById = async (orderId, userId) => {
+    const order = await Order.findOne({ _id: orderId, user: userId }).populate("products.productId");
 
     if (!order) {
         throw new Error("Order not found");
@@ -56,8 +56,19 @@ const updateOrderStatus = async (orderId, status) => {
     return order;
 };
 
-const cancelOrder = async (orderId) => {
-    return await updateOrderStatus(orderId, "cancelled");
+const cancelOrder = async (orderId, userId) => {
+    const order = await Order.findOne({ _id: orderId, user: userId });
+
+    if (!order) {
+        throw new Error("Order not found");
+    }
+    if (!["pending", "processing"].includes(order.status)) {
+        throw new Error("Only orders that have not shipped can be cancelled");
+    }
+
+    order.status = "cancelled";
+    await order.save();
+    return order;
 };
 
 module.exports = { createOrderFromCart, getOrdersByUser, getOrderById, updateOrderStatus, cancelOrder };

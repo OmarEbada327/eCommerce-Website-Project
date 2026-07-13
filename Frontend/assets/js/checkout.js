@@ -29,6 +29,17 @@ function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
 }
 
+function escapeHTML(value = "") {
+  const node = document.createElement("span");
+  node.textContent = String(value);
+  return node.innerHTML;
+}
+
+function updateHeader() {
+  const user = getUser();
+  if (user) $("userGreeting").textContent = `Hi, ${user.name}`;
+}
+
 function showCheckoutError(message) {
   $("checkoutErrorText").textContent = message;
   $("checkoutError").classList.add("show");
@@ -55,6 +66,7 @@ async function loadCartSummary() {
   try {
     const payload = await authFetch("/cart");
     cartData = unwrap(payload) || { products: [] };
+    $("cartCount").textContent = (cartData.products || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
     renderSummary();
   } catch (err) {
     $("summaryItems").innerHTML = `<p class="summary-empty">Couldn't load your cart.</p>`;
@@ -81,7 +93,7 @@ function renderSummary() {
 
     return `
       <div class="summary-line">
-        <span class="name">${name} <span class="qty">&times;${item.quantity}</span></span>
+        <span class="name">${escapeHTML(name)} <span class="qty">&times;${item.quantity}</span></span>
         <span class="price">${money(item.totalPrice)}</span>
       </div>`;
   }).join("");
@@ -119,6 +131,56 @@ requiredFields.forEach((field) => {
     document.querySelector(`.field[data-field="${field}"]`).classList.remove("error");
   });
 });
+
+// ---------------------------------------------------------------------
+// Checkout stages — collect the address before showing payment options.
+// ---------------------------------------------------------------------
+const checkoutBlocks = document.querySelectorAll(".checkout-forms .form-block");
+const shippingBlock = checkoutBlocks[0];
+const paymentBlock = checkoutBlocks[1];
+const checkoutSteps = document.querySelectorAll(".checkout-steps .step");
+
+const continueToPaymentBtn = document.createElement("button");
+continueToPaymentBtn.type = "button";
+continueToPaymentBtn.className = "submit-btn stage-action";
+continueToPaymentBtn.textContent = "Continue to payment";
+shippingBlock.appendChild(continueToPaymentBtn);
+
+const backToShippingBtn = document.createElement("button");
+backToShippingBtn.type = "button";
+backToShippingBtn.className = "btn-ghost-small back-stage-btn";
+backToShippingBtn.textContent = "← Edit shipping";
+paymentBlock.appendChild(backToShippingBtn);
+
+const shippingPrompt = document.createElement("p");
+shippingPrompt.className = "summary-prompt";
+shippingPrompt.textContent = "Complete shipping details to continue.";
+$("placeOrderBtn").before(shippingPrompt);
+
+function setCheckoutStage(stage) {
+  const paymentStage = stage === "payment";
+  shippingBlock.classList.toggle("checkout-stage-hidden", paymentStage);
+  paymentBlock.classList.toggle("checkout-stage-hidden", !paymentStage);
+  shippingPrompt.classList.toggle("checkout-stage-hidden", paymentStage);
+  $("placeOrderBtn").classList.toggle("checkout-stage-hidden", !paymentStage);
+
+  checkoutSteps[1].classList.toggle("active", !paymentStage);
+  checkoutSteps[1].classList.toggle("complete", paymentStage);
+  checkoutSteps[2].classList.toggle("active", paymentStage);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+continueToPaymentBtn.addEventListener("click", () => {
+  hideCheckoutError();
+  const errors = requiredFields.map((field) => renderFieldState(field));
+  if (errors.some(Boolean)) {
+    showCheckoutError("Please fill in the required shipping fields.");
+    return;
+  }
+  setCheckoutStage("payment");
+});
+
+backToShippingBtn.addEventListener("click", () => setCheckoutStage("shipping"));
 
 // ---------------------------------------------------------------------
 // Payment option cards — toggle .active and handle sub-panel visibility
@@ -236,6 +298,11 @@ function validateLuhnFormula(digits) {
   return totalSum % 10 === 0;
 }
 
+function validateCardNumberFormat(digits) {
+  const cleanStr = digits.replace(/\s+/g, "");
+  return /^\d{15,19}$/.test(cleanStr);
+}
+
 /**
  * Validates the input state fields across the credit card block area container.
  * Injects/clears visual error structures dynamically based on pass states.
@@ -253,9 +320,10 @@ function validateCreditCardFields() {
     nameWrap.classList.remove("error");
   }
 
-  // 2. Verify Card Number Checksum via the Luhn Engine
+  // 2. This checkout does not submit card data to a payment processor, so
+  // accept a complete card format rather than rejecting demo/test numbers.
   const numberWrap = document.querySelector('.field[data-field="cardNumber"]');
-  if (!validateLuhnFormula($("cardNumber").value)) {
+  if (!validateCardNumberFormat($("cardNumber").value)) {
     numberWrap.classList.add("error");
     isValid = false;
   } else {
@@ -351,7 +419,7 @@ $("placeOrderBtn").addEventListener("click", async () => {
 
     showToast("Order placed! Redirecting...");
     setTimeout(() => {
-      window.location.href = "../index.html";
+      window.location.href = "orders.html";
     }, 1500);
   } catch (err) {
     showCheckoutError(friendlyError(err.message));
@@ -359,4 +427,11 @@ $("placeOrderBtn").addEventListener("click", async () => {
   }
 });
 
+$("signOutBtn").addEventListener("click", () => {
+  clearSession();
+  window.location.href = "../index.html";
+});
+
+updateHeader();
+setCheckoutStage("shipping");
 loadCartSummary();

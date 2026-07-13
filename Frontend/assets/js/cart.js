@@ -4,6 +4,7 @@ const $ = (id) => document.getElementById(id);
 let cartData = { products: [] };
 let pendingRemovePid = null;
 let lastChangedPid = null;
+let cartBusy = false;
 
 // ---------------------------------------------------------------------
 // Cart is an authenticated-only page 
@@ -28,6 +29,22 @@ function money(n) {
 
 function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
+}
+
+function escapeHTML(value = "") {
+  const node = document.createElement("span");
+  node.textContent = String(value);
+  return node.innerHTML;
+}
+
+function mergeProductDetails(newCartData) {
+  if (!newCartData?.products || !cartData?.products) return newCartData;
+  newCartData.products.forEach((newItem) => {
+    if (typeof newItem.productId !== "string") return;
+    const oldItem = cartData.products.find((old) => pidOf(old) === newItem.productId);
+    if (oldItem && typeof oldItem.productId === "object") newItem.productId = oldItem.productId;
+  });
+  return newCartData;
 }
 
 async function checkApiStatus(reachable) {
@@ -102,28 +119,28 @@ function renderCart() {
     const category = product ? product.category : "";
     const unitPrice = product ? product.price : (item.totalPrice / item.quantity);
     const thumb = (product && product.images && product.images.length && product.images[0].url)
-      ? `<img class="cart-row-thumb" src="${product.images[0].url}" alt="${name}" />`
+      ? `<img class="cart-row-thumb" src="${escapeHTML(product.images[0].url)}" alt="${escapeHTML(name)}" />`
       : `<div class="cart-row-thumb-placeholder"></div>`;
 
     subtotal += item.totalPrice;
 
     return `
-      <div class="cart-row${pid === lastChangedPid ? " qty-pulse" : ""}" data-pid="${pid}" data-name="${name}">
+      <div class="cart-row${pid === lastChangedPid ? " qty-pulse" : ""}" data-pid="${escapeHTML(pid)}" data-name="${escapeHTML(name)}">
         ${thumb}
         <div class="cart-row-info">
-          <span class="cart-row-category">${category}</span>
-          <p class="cart-row-name">${name}</p>
+          <span class="cart-row-category">${escapeHTML(category)}</span>
+          <p class="cart-row-name">${escapeHTML(name)}</p>
           <p class="cart-row-unit-price">${money(unitPrice)} each</p>
         </div>
         <div class="cart-row-qty">
           <div class="qty-stepper">
-            <button class="qty-dec">-</button>
+            <button class="qty-dec" type="button" ${cartBusy ? "disabled" : ""}>-</button>
             <span>${item.quantity}</span>
-            <button class="qty-inc">+</button>
+            <button class="qty-inc" type="button" ${cartBusy ? "disabled" : ""}>+</button>
           </div>
         </div>
         <div class="cart-row-total">${money(item.totalPrice)}</div>
-        <button class="cart-row-remove" title="Remove">
+        <button class="cart-row-remove" type="button" title="Remove" ${cartBusy ? "disabled" : ""}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
         </button>
       </div>`;
@@ -157,6 +174,7 @@ function renderCart() {
 // Quantity change
 // ---------------------------------------------------------------------
 async function changeQty(productId, delta) {
+  if (cartBusy) return;
   const item = cartData.products.find((i) => pidOf(i) === productId);
   const newQty = (item ? item.quantity : 0) + delta;
 
@@ -168,29 +186,20 @@ async function changeQty(productId, delta) {
   }
 
   try {
+    cartBusy = true;
+    renderCart();
     const payload = await authFetch("/cart", {
       method: "PUT",
       body: JSON.stringify({ productId, quantity: newQty }),
     });
-    const newCartData = unwrap(payload);
-
-    // The PUT response returns an unpopulated cart. We merge the old product
-    // details into the new cart data to preserve names, images, etc.
-    if (newCartData && newCartData.products && cartData && cartData.products) {
-      newCartData.products.forEach(newItem => {
-        if (typeof newItem.productId === 'string') {
-          const oldItem = cartData.products.find(old => pidOf(old) === newItem.productId);
-          if (oldItem && typeof oldItem.productId === 'object') {
-            newItem.productId = oldItem.productId;
-          }
-        }
-      });
-    }
-    cartData = newCartData;
+    cartData = mergeProductDetails(unwrap(payload)) || { products: [] };
     lastChangedPid = productId;
     renderCart();
   } catch (err) {
     showToast(err.message);
+  } finally {
+    cartBusy = false;
+    renderCart();
   }
 }
 
@@ -214,8 +223,9 @@ $("removeModalOverlay").addEventListener("click", (e) => {
 });
 
 $("confirmRemoveBtn").addEventListener("click", async () => {
-  if (!pendingRemovePid) return;
+  if (!pendingRemovePid || cartBusy) return;
   const pid = pendingRemovePid;
+  cartBusy = true;
   closeRemoveModal();
 
   const row = document.querySelector(`.cart-row[data-pid="${pid}"]`);
@@ -224,25 +234,12 @@ $("confirmRemoveBtn").addEventListener("click", async () => {
   try {
     await new Promise((resolve) => setTimeout(resolve, 220)); // let the fade-out play
     const payload = await authFetch("/cart/" + pid, { method: "DELETE" });
-    const newCartData = unwrap(payload);
-
-    // Same as with quantity changes, the DELETE response returns an unpopulated
-    // cart. We merge the old product details back in to keep names/images.
-    if (newCartData && newCartData.products && cartData && cartData.products) {
-      newCartData.products.forEach(newItem => {
-        if (typeof newItem.productId === 'string') {
-          const oldItem = cartData.products.find(old => pidOf(old) === newItem.productId);
-          if (oldItem && typeof oldItem.productId === 'object') {
-            newItem.productId = oldItem.productId;
-          }
-        }
-      });
-    }
-    cartData = newCartData;
-    renderCart();
+    cartData = mergeProductDetails(unwrap(payload)) || { products: [] };
     showToast("Item removed");
   } catch (err) {
     showToast(err.message);
+  } finally {
+    cartBusy = false;
     renderCart();
   }
 });
@@ -263,14 +260,18 @@ $("clearModalOverlay").addEventListener("click", (e) => {
 });
 
 $("confirmClearBtn").addEventListener("click", async () => {
+  if (cartBusy) return;
   closeClearModal();
   try {
+    cartBusy = true;
     const payload = await authFetch("/cart", { method: "DELETE" });
-    cartData = unwrap(payload);
-    renderCart();
+    cartData = unwrap(payload) || { products: [] };
     showToast("Cart cleared");
   } catch (err) {
     showToast(err.message);
+  } finally {
+    cartBusy = false;
+    renderCart();
   }
 });
 
