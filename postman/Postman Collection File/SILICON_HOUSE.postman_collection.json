@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "4b5e26a2-deda-44dd-818a-151dceada6be",
+    "_postman_id": "3f0f4dfe-3ccd-483f-9687-5706fe0c3c04",
     "name": "SILICON_HOUSE",
     "description": "This collection contains the main API requests for the **SILICON_HOUSE** eCommerce system. It is organized into functional areas such as authentication, product management, cart operations, order processing, and user administration, providing a structured way to test and manage both customer-facing and admin-only workflows across the application.\n\n---\n\nFull route coverage for the eCommerce backend,Set {{baseUrl}} to your running server (default [http://localhost:3000](http://localhost:3000)). Log in once and the token auto-saves to {{token}} for every protected request.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "55885846",
-    "_collection_link": "https://go.postman.co/collection/55885846-4b5e26a2-deda-44dd-818a-151dceada6be?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/55885846-3f0f4dfe-3ccd-483f-9687-5706fe0c3c04?source=collection_link"
   },
   "item": [
     {
@@ -105,15 +105,6 @@
           "request": {
             "method": "GET",
             "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"id\": \"6a4ea7aec926db551e464608\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
             "url": {
               "raw": "{{baseUrl}}/users/profile",
               "host": [
@@ -186,10 +177,6 @@
     {
       "name": "Products",
       "item": [
-        {
-          "name": "Deletes a specific user account from the SILICON_HOUSE system. This admin-only request is intended for user management tasks, allowing authorized administrators to permanently remove user records when necessary.",
-          "item": []
-        },
         {
           "name": "Get All Products",
           "request": {
