@@ -1,4 +1,9 @@
 /* ---------- Top nav ---------- */
+body.home-page {
+  background-image: radial-gradient(rgba(79, 209, 197, 0.07) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
 .site-nav {
   position: sticky;
   top: 0;
@@ -97,25 +102,35 @@
 .site-nav .nav-links {
   display: flex;
   flex: 1;
-  gap: 22px;
+  gap: 8px;
   justify-content: center;
 }
 
 .site-nav .nav-links a {
-  border-bottom: 2px solid transparent;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
   color: var(--text-muted);
+  display: inline-flex;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 11.5px;
+  font-size: 11px;
+  gap: 6px;
   letter-spacing: .05em;
-  padding: 6px 0;
+  padding: 7px 14px;
   text-decoration: none;
   text-transform: uppercase;
-  transition: color 150ms ease, border-color 150ms ease;
+  transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.site-nav .nav-links a svg {
+  flex-shrink: 0;
 }
 
 .site-nav .nav-links a:hover,
 .site-nav .nav-links a.active {
-  border-bottom-color: var(--signal);
+  background: rgba(79, 209, 197, 0.08);
+  border-color: var(--signal);
   color: var(--signal);
 }
 
@@ -256,11 +271,26 @@
   background: linear-gradient(160deg, #0D1017 0%, #0A0C11 100%);
   border-bottom: 1px solid var(--border);
   padding: 56px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Circuit-trace artwork — the same visual language as the sign-in/register
+   hero, carried onto the storefront so the brand reads as one product. */
+.hero-traces {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.14;
+  pointer-events: none;
 }
 
 .hero-banner-inner {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .hero-banner .eyebrow {
@@ -524,10 +554,46 @@
   cursor: not-allowed;
 }
 
+/* ---------- Page traces ----------
+   Shared circuit-trace backdrop used at the top of cart, checkout, orders,
+   and product-detail pages — the same signature as the hero banner and the
+   sign-in/register screens, kept faint and capped to the heading area so it
+   never competes with real content underneath. Each page supplies its own
+   <svg class="page-traces"> with paths sized to that page's content width;
+   this rule just handles the shared positioning and restraint. */
+.page-traces {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  width: 100%;
+  opacity: 0.13;
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  .page-traces {
+    height: 160px;
+    opacity: 0.1;
+  }
+}
+
 /* ---------- Footer ---------- */
 .site-footer {
   border-top: 1px solid var(--border);
   padding: 20px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.footer-traces {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.08;
+  pointer-events: none;
 }
 
 .site-footer-inner {
@@ -539,6 +605,8 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--text-muted);
+  position: relative;
+  z-index: 1;
 }
 
 .footer-note #apiStatus.online {

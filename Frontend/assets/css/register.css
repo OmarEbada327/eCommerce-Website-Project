@@ -42,6 +42,73 @@ body {
   background: var(--bg);
   font-family: 'Inter', sans-serif;
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ==========================================================================
+   SITEWIDE POLISH
+   Applies everywhere this stylesheet loads (every page in the app) so the
+   whole product feels like one considered system, not a stack of pages.
+   ========================================================================== */
+
+/* Native form controls (date pickers, dropdown chevrons, etc.) render in a
+   dark palette automatically instead of clashing light-mode system UI. */
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Brand-tinted text selection instead of the browser default blue */
+::selection {
+  background: rgba(79, 209, 197, 0.25);
+  color: var(--text);
+}
+
+/* Themed scrollbars (Firefox + WebKit) so the chrome matches the interface */
+* {
+  scrollbar-color: var(--border) var(--surface);
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--copper);
+}
+
+/* One consistent keyboard-focus ring across every interactive element,
+   layered on top of whatever component-specific state already exists. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Master Layout Framework: Establishes a 100vh split screen viewport */
