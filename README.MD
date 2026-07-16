@@ -139,7 +139,7 @@ A Postman collection covering every route (Auth, Users, Products, Cart, Orders) 
   
   ### 3. Admin Access & Role Security
 
-- **Default Role:** For security and realism, all new users registered through the frontend or the `/auth/register` API are assigned the **`shopper`** role by default. 
+- **Default Role:** For security and realism, all new users registered through the frontend or the `/auth/register` API are assigned the **`shopper`** role by default.
 - **Promoting a User to Admin:** To make a user an administrator, you must update their role directly in the MongoDB database:
   1. Open your database using **MongoDB Atlas** or **MongoDB Compass**.
   2. Locate the user's document in the `users` collection.
