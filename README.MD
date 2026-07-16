@@ -137,3 +137,11 @@ A Postman collection covering every route (Auth, Users, Products, Cart, Orders) 
 - Click the **`...`** (More Actions) button next to **Bulk Edit**.
 - Ensure **Content-Type** is selected/added, and set its value to `image/jpeg` if you are sending raw image data.
   
+  ### 3. Admin Access & Role Security
+
+- **Default Role:** For security and realism, all new users registered through the frontend or the `/auth/register` API are assigned the **`shopper`** role by default. 
+- **Promoting a User to Admin:** To make a user an administrator, you must update their role directly in the MongoDB database:
+  1. Open your database using **MongoDB Atlas** or **MongoDB Compass**.
+  2. Locate the user's document in the `users` collection.
+  3. Edit the `role` field from `"shoppers"` to `"admins"`.
+  4. Save the document. The user will now have admin clearance on their next request/login.
