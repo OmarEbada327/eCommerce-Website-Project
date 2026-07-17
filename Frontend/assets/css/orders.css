@@ -1,11 +1,16 @@
 .orders-page {
     min-height: calc(100vh - 150px);
     padding: 48px 24px 80px;
+    position: relative;
+    background-image: radial-gradient(rgba(79, 209, 197, 0.09) 1px, transparent 1px);
+    background-size: 26px 26px;
 }
 
 .orders-page-inner {
     max-width: 920px;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
 }
 
 .orders-heading {
