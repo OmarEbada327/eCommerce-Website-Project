@@ -161,12 +161,22 @@ function validateField(field) {
   }
 }
 
+function setDotState(field, state) {
+  const wrap = document.querySelector(`.field[data-field="${field}"]`);
+  const dot = wrap && wrap.querySelector(".pin-dot");
+  if (!dot) return;
+  dot.classList.remove("valid", "error");
+  if (state) dot.classList.add(state);
+}
+
 function renderFieldState(field) {
   const wrap = document.querySelector(`.field[data-field="${field}"]`);
   const error = validateField(field);
-  wrap.classList.toggle("error", touched[field] ? !!error : false);
+  const showError = touched[field] ? !!error : false;
+  wrap.classList.toggle("error", showError);
   const errEl = wrap.querySelector(".field-error");
   if (errEl && error) errEl.textContent = error;
+  setDotState(field, !touched[field] ? null : error ? "error" : "valid");
   return error;
 }
 
@@ -207,6 +217,8 @@ function renderImagesFieldState() {
   wrap.classList.toggle("error", !!error);
   const errEl = wrap.querySelector(".field-error");
   if (errEl) errEl.textContent = error || "At least one image is required";
+  const hasFiles = $("images").files.length > 0;
+  setDotState("images", error ? "error" : hasFiles ? "valid" : null);
   return error;
 }
 
@@ -231,10 +243,12 @@ function resetForm() {
     document
       .querySelector(`.field[data-field="${f}"]`)
       .classList.remove("error");
+    setDotState(f, null);
   });
   document
     .querySelector('.field[data-field="images"]')
     .classList.remove("error");
+  setDotState("images", null);
   hideFormError();
 }
 
@@ -260,6 +274,11 @@ function openEditModal(id) {
   $("quantity").value = product.quantity;
   $("category").value = product.category;
   $("description").value = product.description;
+
+  formFields.forEach((f) => {
+    touched[f] = true;
+    renderFieldState(f);
+  });
 
   $("modalTitle").textContent = "Edit product";
   $("saveBtnLabel").textContent = "Save changes";

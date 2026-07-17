@@ -554,13 +554,7 @@ body.home-page {
   cursor: not-allowed;
 }
 
-/* ---------- Page traces ----------
-   Shared circuit-trace backdrop used at the top of cart, checkout, orders,
-   and product-detail pages — the same signature as the hero banner and the
-   sign-in/register screens, kept faint and capped to the heading area so it
-   never competes with real content underneath. Each page supplies its own
-   <svg class="page-traces"> with paths sized to that page's content width;
-   this rule just handles the shared positioning and restraint. */
+/* ---------- Page traces ---------- */
 .page-traces {
   position: absolute;
   top: 0;

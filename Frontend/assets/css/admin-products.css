@@ -69,13 +69,36 @@
 }
 
 /* ---------- Shell ---------- */
+.page-traces {
+  height: 220px;
+  left: 0;
+  opacity: 0.13;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .page-traces {
+    height: 160px;
+    opacity: 0.1;
+  }
+}
+
 .admin-shell {
   padding: 40px 24px 80px;
+  position: relative;
+  background-image: radial-gradient(rgba(79, 209, 197, 0.09) 1px, transparent 1px);
+  background-size: 26px 26px;
 }
 
 .admin-shell-inner {
   max-width: 1200px;
   margin: 0 auto;
+  position: relative;
+  z-index: 1;
 }
 
 .admin-header {
@@ -318,13 +341,37 @@
 }
 
 #productForm label {
-  display: block;
+  align-items: center;
+  color: var(--text-muted);
+  display: flex;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
+  gap: 8px;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-muted);
   margin-bottom: 7px;
+  text-transform: uppercase;
+}
+
+#productForm .input-wrap {
+  position: relative;
+}
+
+#productForm .input-wrap svg.icon {
+  color: var(--text-muted);
+  left: 14px;
+  pointer-events: none;
+  position: absolute;
+  top: 22px;
+}
+
+#productForm .input-wrap textarea ~ svg.icon {
+  top: 16px;
+}
+
+#productForm .field .input-wrap input,
+#productForm .field .input-wrap select,
+#productForm .field .input-wrap textarea {
+  padding-left: 40px;
 }
 
 #productForm input[type="text"],
@@ -378,6 +425,11 @@
   background-size: 14px;
   cursor: pointer;
   padding-right: 42px;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+}
+
+#productForm select:hover {
+  border-color: #3a4152;
 }
 
 #productForm select:invalid {
@@ -387,10 +439,22 @@
 #productForm select option {
   background: var(--surface-2);
   color: var(--text);
+  padding: 10px 12px;
 }
 
 #productForm select option[value=""] {
   color: var(--text-muted);
+}
+
+#productForm select optgroup {
+  background: var(--surface);
+  color: var(--copper);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 /* Branded file picker — keeps the native file selection behavior while styling

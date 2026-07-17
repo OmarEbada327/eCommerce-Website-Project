@@ -46,12 +46,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* ==========================================================================
-   SITEWIDE POLISH
-   Applies everywhere this stylesheet loads (every page in the app) so the
-   whole product feels like one considered system, not a stack of pages.
-   ========================================================================== */
-
 /* Native form controls (date pickers, dropdown chevrons, etc.) render in a
    dark palette automatically instead of clashing light-mode system UI. */
 :root {

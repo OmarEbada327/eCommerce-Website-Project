@@ -1,11 +1,16 @@
 .checkout-page {
   min-height: calc(100vh - 140px);
   padding: 34px 24px 80px;
+  position: relative;
+  background-image: radial-gradient(rgba(79, 209, 197, 0.09) 1px, transparent 1px);
+  background-size: 26px 26px;
 }
 
 .checkout-page-inner {
   margin: 0 auto;
   max-width: 1000px;
+  position: relative;
+  z-index: 1;
 }
 
 .checkout-page-heading {
@@ -142,13 +147,28 @@
 }
 
 .field label {
+  align-items: center;
   color: var(--text-muted);
-  display: block;
+  display: flex;
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
+  gap: 8px;
   letter-spacing: .06em;
   margin-bottom: 7px;
   text-transform: uppercase;
+}
+
+.input-wrap {
+  position: relative;
+}
+
+.input-wrap svg.icon {
+  color: var(--text-muted);
+  left: 14px;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .field input {
@@ -159,14 +179,16 @@
   color: var(--text);
   font-family: 'Inter', sans-serif;
   font-size: 13.5px;
+  min-height: 44px;
   outline: none;
-  padding: 11px 13px;
-  transition: border-color 150ms ease;
+  padding: 12px 14px 12px 40px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
   width: 100%;
 }
 
 .field input:focus {
   border-color: var(--signal);
+  box-shadow: 0 0 0 3px rgba(79, 209, 197, .13);
 }
 
 .field input::placeholder {
@@ -175,6 +197,7 @@
 
 .field.error input {
   border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(226, 87, 76, .13);
 }
 
 .field-error {
@@ -265,9 +288,10 @@
 
 .card-brand-badge {
   color: var(--text-muted);
-  float: right;
   font-size: 9px;
   letter-spacing: .05em;
+  margin-left: auto;
+  text-transform: none;
 }
 
 .card-brand-badge.visa,
@@ -470,22 +494,6 @@
   line-height: 1.5;
   margin: 0;
   text-align: center;
-}
-
-.checkout-forms .field input {
-  min-height: 44px;
-  padding: 12px 14px;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
-}
-
-.checkout-forms .field input:focus {
-  border-color: var(--signal);
-  box-shadow: 0 0 0 3px rgba(79, 209, 197, .13);
-}
-
-.checkout-forms .field.error input {
-  border-color: var(--danger);
-  box-shadow: 0 0 0 3px rgba(226, 87, 76, .13);
 }
 
 .payment-option {

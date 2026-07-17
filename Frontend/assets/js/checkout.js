@@ -117,6 +117,15 @@ function renderSummary() {
 // city isn't a real order — enforce it client-side for a sane UX.)
 // ---------------------------------------------------------------------
 const requiredFields = ["street", "city", "country"];
+const optionalFields = ["state", "zip"];
+
+function setDotState(field, state) {
+  const wrap = document.querySelector(`.field[data-field="${field}"]`);
+  const dot = wrap && wrap.querySelector(".pin-dot");
+  if (!dot) return;
+  dot.classList.remove("valid", "error");
+  if (state) dot.classList.add(state);
+}
 
 function validateField(field) {
   const value = $(field).value.trim();
@@ -129,6 +138,7 @@ function renderFieldState(field) {
   wrap.classList.toggle("error", !!error);
   const errEl = wrap.querySelector(".field-error");
   if (errEl) errEl.textContent = error;
+  setDotState(field, error ? "error" : "valid");
   return error;
 }
 
@@ -136,10 +146,22 @@ requiredFields.forEach((field) => {
   $(field).addEventListener("blur", () => renderFieldState(field));
   $(field).addEventListener("input", () => {
     hideCheckoutError();
-    document
-      .querySelector(`.field[data-field="${field}"]`)
-      .classList.remove("error");
+    renderFieldState(field);
   });
+});
+
+// "Country" ships pre-filled with "Egypt" — light its dot green right away
+// instead of waiting for the user to touch a field that's already valid.
+renderFieldState("country");
+
+// Optional shipping fields have nothing to get "wrong", so the dot just
+// confirms something has been entered rather than flagging an error.
+optionalFields.forEach((field) => {
+  const input = $(field);
+  if (!input) return;
+  const update = () => setDotState(field, input.value.trim() ? "valid" : null);
+  input.addEventListener("input", update);
+  input.addEventListener("blur", update);
 });
 
 // ---------------------------------------------------------------------
@@ -219,6 +241,7 @@ document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
         ["cardName", "cardNumber", "cardExpiry", "cardCvv"].forEach((f) => {
           const wrap = document.querySelector(`.field[data-field="${f}"]`);
           if (wrap) wrap.classList.remove("error", "valid");
+          setDotState(f, null);
         });
       }
     }
@@ -314,6 +337,42 @@ function validateCardNumberFormat(digits) {
   return /^\d{15,19}$/.test(cleanStr);
 }
 
+function applyFieldValidity(field, isValid) {
+  const wrap = document.querySelector(`.field[data-field="${field}"]`);
+  if (wrap) wrap.classList.toggle("error", !isValid);
+  setDotState(field, isValid ? "valid" : "error");
+}
+
+function isCardNameValid() {
+  return $("cardName").value.trim().length >= 3;
+}
+
+function isCardNumberValid() {
+  return validateCardNumberFormat($("cardNumber").value);
+}
+
+function isCardExpiryValid() {
+  const expMatch = $("cardExpiry").value.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/);
+  if (!expMatch) return false;
+
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = parseInt(
+    new Date().getFullYear().toString().substring(2),
+    10,
+  );
+  const parsedMonth = parseInt(expMatch[1], 10);
+  const parsedYear = parseInt(expMatch[2], 10);
+
+  return !(
+    parsedYear < currentYear ||
+    (parsedYear === currentYear && parsedMonth < currentMonth)
+  );
+}
+
+function isCardCvvValid() {
+  return $("cardCvv").value.length >= 3;
+}
+
 /**
  * Validates the input state fields across the credit card block area container.
  * Injects/clears visual error structures dynamically based on pass states.
@@ -321,63 +380,46 @@ function validateCardNumberFormat(digits) {
 function validateCreditCardFields() {
   let isValid = true;
 
-  // 1. Verify Cardholder Name String Length
-  const nameWrap = document.querySelector('.field[data-field="cardName"]');
-  const nameValue = $("cardName").value.trim();
-  if (nameValue.length < 3) {
-    nameWrap.classList.add("error");
-    isValid = false;
-  } else {
-    nameWrap.classList.remove("error");
-  }
+  if (!isCardNameValid()) isValid = false;
+  applyFieldValidity("cardName", isCardNameValid());
 
-  // 2. This checkout does not submit card data to a payment processor
-  const numberWrap = document.querySelector('.field[data-field="cardNumber"]');
-  if (!validateCardNumberFormat($("cardNumber").value)) {
-    numberWrap.classList.add("error");
-    isValid = false;
-  } else {
-    numberWrap.classList.remove("error");
-  }
+  if (!isCardNumberValid()) isValid = false;
+  applyFieldValidity("cardNumber", isCardNumberValid());
 
-  // 3. Verify Expiration Schema Mechanics & Date Timelines
-  const expiryWrap = document.querySelector('.field[data-field="cardExpiry"]');
-  const expMatch = $("cardExpiry").value.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/);
+  if (!isCardExpiryValid()) isValid = false;
+  applyFieldValidity("cardExpiry", isCardExpiryValid());
 
-  if (!expMatch) {
-    expiryWrap.classList.add("error");
-    isValid = false;
-  } else {
-    const currentMonth = new Date().getMonth() + 1;
-    const currentYear = parseInt(
-      new Date().getFullYear().toString().substring(2),
-      10,
-    );
-    const parsedMonth = parseInt(expMatch[1], 10);
-    const parsedYear = parseInt(expMatch[2], 10);
-
-    // Fail execution loops if year target scales backward or falls short under active parameters month scopes
-    if (
-      parsedYear < currentYear ||
-      (parsedYear === currentYear && parsedMonth < currentMonth)
-    ) {
-      expiryWrap.classList.add("error");
-      isValid = false;
-    } else {
-      expiryWrap.classList.remove("error");
-    }
-  }
-
-  // 4. Verify CVV Security Code Value Structure Sizing Boundaries
-  const cvvWrap = document.querySelector('.field[data-field="cardCvv"]');
-  if ($("cardCvv").value.length < 3) {
-    cvvWrap.classList.add("error");
-    isValid = false;
-  } else {
-    cvvWrap.classList.remove("error");
-  }
+  if (!isCardCvvValid()) isValid = false;
+  applyFieldValidity("cardCvv", isCardCvvValid());
 
   return isValid;
+}
+
+// Live per-field feedback as the shopper types/tabs through the card form,
+// instead of only surfacing validity on submit.
+if ($("cardName")) {
+  $("cardName").addEventListener("blur", () =>
+    applyFieldValidity("cardName", isCardNameValid()),
+  );
+  $("cardNumber").addEventListener("blur", () =>
+    applyFieldValidity("cardNumber", isCardNumberValid()),
+  );
+  $("cardExpiry").addEventListener("blur", () =>
+    applyFieldValidity("cardExpiry", isCardExpiryValid()),
+  );
+  $("cardCvv").addEventListener("blur", () =>
+    applyFieldValidity("cardCvv", isCardCvvValid()),
+  );
+
+  ["cardName", "cardNumber", "cardExpiry", "cardCvv"].forEach((field) => {
+    $(field).addEventListener("input", () => {
+      hideCheckoutError();
+      document
+        .querySelector(`.field[data-field="${field}"]`)
+        .classList.remove("error");
+      setDotState(field, null);
+    });
+  });
 }
 
 // ---------------------------------------------------------------------
