@@ -105,11 +105,11 @@ function renderOrders() {
         [address.city, address.country].filter(Boolean).join(", ") ||
         "No address";
       const isUpdating = updatingOrderId === order._id;
-      return `<tr><td><strong>#${escapeHTML(
+      return `<tr><td data-label="Order"><strong>#${escapeHTML(
         String(order._id || "")
           .slice(-8)
           .toUpperCase(),
-      )}</strong><span class="order-meta">${formatDate(order.createdAt)}</span></td><td><strong>${escapeHTML(user.name || "Unknown customer")}</strong><span class="order-meta">${escapeHTML(user.email || user.phone || destination)}</span></td><td class="order-items" title="${escapeHTML(itemText)}">${escapeHTML(products.length)} item${products.length === 1 ? "" : "s"}<span class="order-meta">${escapeHTML(destination)}</span></td><td class="col-num">${money(order.totalPrice)}</td><td><span class="order-status status-${escapeHTML(status)}">${escapeHTML(status)}</span></td><td><div class="status-editor"><select class="status-select" data-order-id="${escapeHTML(order._id)}" aria-label="Status for order ${escapeHTML(String(order._id).slice(-8))}">${STATUSES.map((value) => `<option value="${value}"${value === status ? " selected" : ""}>${value}</option>`).join("")}</select><button class="save-status-btn" data-order-id="${escapeHTML(order._id)}" type="button"${isUpdating ? " disabled" : ""}>${isUpdating ? "Saving…" : "Save"}</button></div></td></tr>`;
+      )}</strong><span class="order-meta">${formatDate(order.createdAt)}</span></td><td data-label="Customer"><strong>${escapeHTML(user.name || "Unknown customer")}</strong><span class="order-meta">${escapeHTML(user.email || user.phone || destination)}</span></td><td class="order-items" data-label="Items" title="${escapeHTML(itemText)}">${escapeHTML(products.length)} item${products.length === 1 ? "" : "s"}<span class="order-meta">${escapeHTML(destination)}</span></td><td class="col-num" data-label="Total">${money(order.totalPrice)}</td><td data-label="Status"><span class="order-status status-${escapeHTML(status)}">${escapeHTML(status)}</span></td><td class="col-actions" data-label="Update"><div class="status-editor"><select class="status-select" data-order-id="${escapeHTML(order._id)}" aria-label="Status for order ${escapeHTML(String(order._id).slice(-8))}">${STATUSES.map((value) => `<option value="${value}"${value === status ? " selected" : ""}>${value}</option>`).join("")}</select><button class="save-status-btn" data-order-id="${escapeHTML(order._id)}" type="button"${isUpdating ? " disabled" : ""}>${isUpdating ? "Saving…" : "Save"}</button></div></td></tr>`;
     })
     .join("");
 }

@@ -137,7 +137,7 @@
     opacity: .6;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 860px) {
     .order-summary {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
@@ -145,18 +145,25 @@
     .order-toolbar {
         flex-direction: column;
     }
+}
 
-    .orders-table th:nth-child(3),
-    .orders-table td:nth-child(3) {
-        display: none;
+@media (max-width: 860px) {
+    /* The shared .admin-table card layout (admin-products.css) takes over
+       below this width, so the desktop-only truncation and status-editor
+       inline sizing need to relax to fit a full-width card row. */
+    .order-items {
+        max-width: none;
     }
 
-    .admin-table-wrap {
-        overflow-x: auto;
+    .status-editor {
+        flex-wrap: wrap;
+        width: 100%;
     }
 
-    .orders-table {
-        min-width: 700px;
+    .status-select,
+    .save-status-btn {
+        flex: 1;
+        min-width: 100px;
     }
 }
 
@@ -178,18 +185,5 @@
         font-size: 9px;
         letter-spacing: .04em;
         line-height: 1.35;
-    }
-
-    .status-editor {
-        flex-wrap: wrap;
-    }
-
-    .status-select,
-    .save-status-btn {
-        flex: 1;
-    }
-
-    .orders-table {
-        min-width: 610px;
     }
 }

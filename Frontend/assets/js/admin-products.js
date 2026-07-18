@@ -107,10 +107,10 @@ function renderTable() {
       return `
       <tr data-id="${p._id}">
         <td class="col-img">${thumb}</td>
-        <td>${p.name}</td>
-        <td><span class="row-category">${p.category}</span></td>
-        <td class="col-num">${money(p.price)}</td>
-        <td class="col-num"><span class="stock-pill ${stockClass}">${p.quantity}</span></td>
+        <td class="row-name">${p.name}</td>
+        <td data-label="Category"><span class="row-category">${p.category}</span></td>
+        <td class="col-num" data-label="Price">${money(p.price)}</td>
+        <td class="col-num" data-label="Stock"><span class="stock-pill ${stockClass}">${p.quantity}</span></td>
         <td class="col-actions">
           <div class="row-actions">
             <button class="icon-btn edit-btn" title="Edit" data-id="${p._id}">
