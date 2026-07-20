@@ -36,9 +36,9 @@ PORT=3000
 MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=7d
-CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_api_key
-CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+CLOUDINARY_CLOUD_NAME=vad2jw7q
+CLOUDINARY_API_KEY=694483939312723
+CLOUDINARY_API_SECRET=fr2-QVdlehDEO0Rtwl76kMacQ7Q
 ```
 
 ## Run

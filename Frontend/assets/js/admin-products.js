@@ -1,21 +1,44 @@
+/* ==========================================================================
+   SILICON HOUSE — Admin: Product Management
+   Full CRUD interface for managing the product catalog. Supports adding new
+   products, editing existing ones (with image replacement), and deleting
+   products. All operations require an admin session.
+   ========================================================================== */
+
 const $ = (id) => document.getElementById(id);
 
+// ---------------------------------------------------------------------------
+// Image Upload Constraints
+// ---------------------------------------------------------------------------
+
+/** @type {string[]} Accepted MIME types for product images. */
 const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
   "image/jpg",
 ];
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
+/** Maximum file size per image (5 MB). */
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+/** Maximum number of images per product. */
 const MAX_IMAGE_COUNT = 5;
 
+// ---------------------------------------------------------------------------
+// State
+// ---------------------------------------------------------------------------
+
+/** @type {Array<Object>} The full product list from the backend. */
 let allProducts = [];
-let editingId = null; // null = create mode, otherwise the product's _id
+/** @type {string|null} Product _id when editing, or null for create mode. */
+let editingId = null;
+/** @type {string|null} Product _id pending deletion confirmation. */
 let deleteTargetId = null;
 
-// ---------------------------------------------------------------------
-// Helpers (same patterns used across the other pages)
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Shows a brief toast notification. */
 function showToast(message) {
   const toast = $("toast");
   toast.textContent = message;
@@ -23,16 +46,31 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
+/**
+ * Formats a number as EGP currency.
+ * @param {number} n
+ * @returns {string}
+ */
 function money(n) {
   return (
     "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
   );
 }
 
+/**
+ * Unwraps a response envelope.
+ * @param {Object|Array} payload
+ * @returns {Object|Array}
+ */
 function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
 }
 
+/**
+ * Generates a user-friendly error message.
+ * @param {string} rawMessage
+ * @returns {string}
+ */
 function friendlyError(rawMessage) {
   if (!rawMessage) return "Something went wrong. Please try again.";
   if (rawMessage.toLowerCase().includes("not authorized")) {
@@ -44,9 +82,15 @@ function friendlyError(rawMessage) {
   return rawMessage;
 }
 
-// ---------------------------------------------------------------------
-// Access guard — this whole page is admin-only.
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Access Guard — this page is admin-only.
+// ---------------------------------------------------------------------------
+
+/**
+ * Verifies the current user has admin privileges. Redirects non-admins
+ * to the homepage or login page after showing a notice.
+ * @returns {boolean} true if the user is an admin.
+ */
 function enforceAdminAccess() {
   const loggedIn = typeof isLoggedIn === "function" && isLoggedIn();
   const user = typeof getUser === "function" ? getUser() : null;
@@ -66,17 +110,20 @@ function enforceAdminAccess() {
   return true;
 }
 
-// ---------------------------------------------------------------------
-// Sign out
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Sign Out
+// ---------------------------------------------------------------------------
+
 $("signOutBtn").addEventListener("click", () => {
   clearSession();
   window.location.href = "../../index.html";
 });
 
-// ---------------------------------------------------------------------
-// Load + render product table
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Product Table
+// ---------------------------------------------------------------------------
+
+/** Fetches all products from the backend and renders the table. */
 async function loadProducts() {
   try {
     const payload = await authFetch("/products");
@@ -88,6 +135,7 @@ async function loadProducts() {
   }
 }
 
+/** Renders the admin product table with edit/delete actions. */
 function renderTable() {
   if (allProducts.length === 0) {
     $("productTableBody").innerHTML =
@@ -125,6 +173,7 @@ function renderTable() {
     })
     .join("");
 
+  // Bind edit/delete button handlers.
   document.querySelectorAll(".edit-btn").forEach((btn) => {
     btn.addEventListener("click", () => openEditModal(btn.dataset.id));
   });
@@ -133,12 +182,19 @@ function renderTable() {
   });
 }
 
-// ---------------------------------------------------------------------
-// Add/Edit modal
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Add / Edit Modal
+// ---------------------------------------------------------------------------
+
 const formFields = ["name", "price", "quantity", "category", "description"];
+/** Tracks which fields have been touched by the user (for progressive validation). */
 const touched = {};
 
+/**
+ * Validates a single form field.
+ * @param {string} field – The field name.
+ * @returns {string} Empty string if valid, error message otherwise.
+ */
 function validateField(field) {
   const value = $(field).value;
   switch (field) {
@@ -161,6 +217,11 @@ function validateField(field) {
   }
 }
 
+/**
+ * Updates the pin-dot validation indicator for a field.
+ * @param {string} field
+ * @param {string|null} state – "valid", "error", or null.
+ */
 function setDotState(field, state) {
   const wrap = document.querySelector(`.field[data-field="${field}"]`);
   const dot = wrap && wrap.querySelector(".pin-dot");
@@ -169,6 +230,11 @@ function setDotState(field, state) {
   if (state) dot.classList.add(state);
 }
 
+/**
+ * Applies visual valid/error state and error message to a field wrapper.
+ * @param {string} field
+ * @returns {string} The validation error (empty if valid).
+ */
 function renderFieldState(field) {
   const wrap = document.querySelector(`.field[data-field="${field}"]`);
   const error = validateField(field);
@@ -180,6 +246,7 @@ function renderFieldState(field) {
   return error;
 }
 
+// Bind input/blur handlers for live validation feedback.
 formFields.forEach((field) => {
   $(field).addEventListener("input", () => {
     hideFormError();
@@ -191,6 +258,11 @@ formFields.forEach((field) => {
   });
 });
 
+/**
+ * Validates the images file input.
+ * @param {boolean} required – Whether at least one file is required.
+ * @returns {string} Error message or empty string.
+ */
 function validateImages(required) {
   const files = Array.from($("images").files);
 
@@ -211,6 +283,7 @@ function validateImages(required) {
   return "";
 }
 
+/** Applies visual validation state to the images field. */
 function renderImagesFieldState() {
   const wrap = document.querySelector('.field[data-field="images"]');
   const error = validateImages(!editingId);
@@ -235,6 +308,7 @@ function hideFormError() {
   $("formError").classList.remove("show");
 }
 
+/** Resets the modal form to its default (create) state. */
 function resetForm() {
   $("productForm").reset();
   $("productId").value = "";
@@ -252,6 +326,7 @@ function resetForm() {
   hideFormError();
 }
 
+/** Opens the modal in "Add product" mode. */
 function openAddModal() {
   editingId = null;
   resetForm();
@@ -262,6 +337,10 @@ function openAddModal() {
   $("productModalOverlay").classList.add("open");
 }
 
+/**
+ * Opens the modal in "Edit product" mode, pre-populated with existing data.
+ * @param {string} id – The product _id.
+ */
 function openEditModal(id) {
   const product = allProducts.find((p) => p._id === id);
   if (!product) return;
@@ -297,9 +376,14 @@ $("productModalOverlay").addEventListener("click", (e) => {
   if (e.target.id === "productModalOverlay") closeProductModal();
 });
 
-// ---------------------------------------------------------------------
-// Submit create/edit
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Submit Create / Edit
+// ---------------------------------------------------------------------------
+
+/**
+ * Toggles the saving/disabled state of the submit button.
+ * @param {boolean} isSaving
+ */
 function setSaving(isSaving) {
   $("saveBtn").disabled = isSaving;
   $("saveBtnLabel").textContent = isSaving
@@ -312,6 +396,7 @@ function setSaving(isSaving) {
 $("productForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  // Validate all fields.
   formFields.forEach((f) => (touched[f] = true));
   const errors = formFields.map((f) => renderFieldState(f));
 
@@ -326,6 +411,7 @@ $("productForm").addEventListener("submit", async (e) => {
   setSaving(true);
   hideFormError();
 
+  // Build FormData payload (supports image uploads).
   const formData = new FormData();
   formData.append("name", $("name").value.trim());
   formData.append("price", $("price").value);
@@ -356,9 +442,14 @@ $("productForm").addEventListener("submit", async (e) => {
   }
 });
 
-// ---------------------------------------------------------------------
-// Delete modal
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Delete Modal
+// ---------------------------------------------------------------------------
+
+/**
+ * Opens the delete confirmation modal for a specific product.
+ * @param {string} id – The product _id.
+ */
 function openDeleteModal(id) {
   const product = allProducts.find((p) => p._id === id);
   if (!product) return;
@@ -377,6 +468,7 @@ $("deleteModalOverlay").addEventListener("click", (e) => {
   if (e.target.id === "deleteModalOverlay") closeDeleteModal();
 });
 
+/** Confirms deletion — sends DELETE request to the backend. */
 $("confirmDeleteBtn").addEventListener("click", async () => {
   if (!deleteTargetId) return;
   try {
@@ -389,9 +481,10 @@ $("confirmDeleteBtn").addEventListener("click", async () => {
   }
 });
 
-// ---------------------------------------------------------------------
-// Init
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Initialisation
+// ---------------------------------------------------------------------------
+
 if (enforceAdminAccess()) {
   loadProducts();
 }

@@ -42,11 +42,16 @@
                         <circle cx="20" cy="21" r="1" />
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                     </svg><span id="cartCount" class="cart-count">0</span></a>
-                <div class="auth-actions"><span id="userGreeting" class="user-greeting"></span><a
-                        href="admin/orders.html" id="allOrdersAdminLink" class="btn-ghost-small initially-hidden">All
-                        orders</a><a href="admin/products.html" id="adminLink"
-                        class="btn-ghost-small initially-hidden">Admin</a><button id="signOutBtn"
-                        class="btn-ghost-small" type="button">Sign out</button></div>
+
+                <span id="userGreeting" class="user-greeting initially-hidden"></span>
+
+                <div class="auth-actions">
+                    <a href="admin/orders.html" id="allOrdersAdminLink"
+                        class="btn-ghost-small initially-hidden">All orders</a>
+                    <a href="admin/products.html" id="adminLink"
+                        class="btn-ghost-small initially-hidden">Admin</a>
+                    <button id="signOutBtn" class="btn-ghost-small" type="button">Sign out</button>
+                </div>
             </div>
         </div>
     </header>
@@ -86,7 +91,7 @@
                 <p>Your completed orders will appear here.</p><a class="submit-btn" href="../index.html">Browse
                     products</a>
             </section>
-            <section id="ordersError" class="orders-error hidden" role="alert"><strong>Couldn’t load your
+            <section id="ordersError" class="orders-error hidden" role="alert"><strong>Couldn't load your
                     orders.</strong><span id="ordersErrorText"></span><button id="retryBtn" class="btn-ghost-small"
                     type="button">Try again</button></section>
             <section id="ordersList" class="orders-list hidden" aria-live="polite"></section>

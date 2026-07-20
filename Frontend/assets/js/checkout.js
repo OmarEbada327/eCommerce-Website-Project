@@ -1,17 +1,29 @@
+/* ==========================================================================
+   SILICON HOUSE — Checkout Page
+   Two-stage checkout flow: (1) shipping address, (2) payment method.
+   Validates required fields, supports credit card input masking, Luhn
+   verification, and live card brand detection. Places the order via the
+   backend and redirects to the orders page on success.
+   This page is authenticated-only.
+   ========================================================================== */
+
 const $ = (id) => document.getElementById(id);
 
+/** @type {{ products: Array<Object> }} The cart snapshot used for summary. */
 let cartData = { products: [] };
 
-// ---------------------------------------------------------------------
-// Guard: checkout is an authenticated-only page.
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Guard: checkout requires an active session.
+// ---------------------------------------------------------------------------
 if (typeof isLoggedIn !== "function" || !isLoggedIn()) {
   window.location.href = "auth/login.html";
 }
 
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+
+/** Shows a brief toast notification. */
 function showToast(message) {
   const toast = $("toast");
   toast.textContent = message;
@@ -19,27 +31,56 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
+/**
+ * Formats a number as EGP currency.
+ * @param {number} n
+ * @returns {string}
+ */
 function money(n) {
   return (
     "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
   );
 }
 
+/**
+ * Unwraps a response envelope.
+ * @param {Object|Array} payload
+ * @returns {Object|Array}
+ */
 function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
 }
 
+/** Escapes unsafe characters for HTML interpolation. */
 function escapeHTML(value = "") {
   const node = document.createElement("span");
   node.textContent = String(value);
   return node.innerHTML;
 }
 
+// ---------------------------------------------------------------------------
+// Navigation Header
+// ---------------------------------------------------------------------------
+
+/**
+ * Updates the greeting badge in the header.
+ */
 function updateHeader() {
   const user = getUser();
-  if (user) $("userGreeting").textContent = `Hi, ${user.name}`;
+  const greetingEl = $("userGreeting");
+  if (user) {
+    greetingEl.textContent = `Hi, ${user.name}`;
+    greetingEl.style.display = "inline-flex";
+  } else {
+    greetingEl.style.display = "none";
+  }
 }
 
+// ---------------------------------------------------------------------------
+// Error Display
+// ---------------------------------------------------------------------------
+
+/** Shows a checkout error banner above the place-order button. */
 function showCheckoutError(message) {
   $("checkoutErrorText").textContent = message;
   $("checkoutError").classList.add("show");
@@ -48,6 +89,11 @@ function hideCheckoutError() {
   $("checkoutError").classList.remove("show");
 }
 
+/**
+ * Generates a user-friendly error message from a raw server response.
+ * @param {string} rawMessage
+ * @returns {string}
+ */
 function friendlyError(rawMessage) {
   if (!rawMessage) return "Something went wrong. Please try again.";
   if (rawMessage.toLowerCase().includes("cart is empty")) {
@@ -59,9 +105,11 @@ function friendlyError(rawMessage) {
   return rawMessage;
 }
 
-// ---------------------------------------------------------------------
-// Load cart + render order summary
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Cart Summary Loading
+// ---------------------------------------------------------------------------
+
+/** Fetches the cart from the backend and renders the summary sidebar. */
 async function loadCartSummary() {
   try {
     const payload = await authFetch("/cart");
@@ -78,6 +126,7 @@ async function loadCartSummary() {
   }
 }
 
+/** Renders the order summary sidebar with line items and totals. */
 function renderSummary() {
   const items = cartData.products || [];
 
@@ -111,14 +160,18 @@ function renderSummary() {
   $("placeOrderBtn").disabled = false;
 }
 
-// ---------------------------------------------------------------------
-// Shipping field validation
-// (Backend doesn't require these, but a checkout without a street or
-// city isn't a real order — enforce it client-side for a sane UX.)
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Shipping Field Validation
+// ---------------------------------------------------------------------------
+
 const requiredFields = ["street", "city", "country"];
 const optionalFields = ["state", "zip"];
 
+/**
+ * Updates the pin-dot indicator for a form field.
+ * @param {string} field – The field name.
+ * @param {string|null} state – "valid", "error", or null to clear.
+ */
 function setDotState(field, state) {
   const wrap = document.querySelector(`.field[data-field="${field}"]`);
   const dot = wrap && wrap.querySelector(".pin-dot");
@@ -127,11 +180,21 @@ function setDotState(field, state) {
   if (state) dot.classList.add(state);
 }
 
+/**
+ * Checks that a required field has a non-empty value.
+ * @param {string} field
+ * @returns {string} Empty string if valid, error message if not.
+ */
 function validateField(field) {
   const value = $(field).value.trim();
   return value.length > 0 ? "" : "This field is required";
 }
 
+/**
+ * Applies visual valid/error state to a field wrapper.
+ * @param {string} field
+ * @returns {string} The validation error message (empty if valid).
+ */
 function renderFieldState(field) {
   const wrap = document.querySelector(`.field[data-field="${field}"]`);
   const error = validateField(field);
@@ -150,12 +213,9 @@ requiredFields.forEach((field) => {
   });
 });
 
-// "Country" ships pre-filled with "Egypt" — light its dot green right away
-// instead of waiting for the user to touch a field that's already valid.
+// Pre-fill Egypt as the default country and mark it valid immediately.
 renderFieldState("country");
 
-// Optional shipping fields have nothing to get "wrong", so the dot just
-// confirms something has been entered rather than flagging an error.
 optionalFields.forEach((field) => {
   const input = $(field);
   if (!input) return;
@@ -164,9 +224,10 @@ optionalFields.forEach((field) => {
   input.addEventListener("blur", update);
 });
 
-// ---------------------------------------------------------------------
-// Checkout stages — collect the address before showing payment options.
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Checkout Stage Navigation (Shipping → Payment)
+// ---------------------------------------------------------------------------
+
 const checkoutBlocks = document.querySelectorAll(".checkout-forms .form-block");
 const shippingBlock = checkoutBlocks[0];
 const paymentBlock = checkoutBlocks[1];
@@ -181,7 +242,7 @@ shippingBlock.appendChild(continueToPaymentBtn);
 const backToShippingBtn = document.createElement("button");
 backToShippingBtn.type = "button";
 backToShippingBtn.className = "btn-ghost-small back-stage-btn";
-backToShippingBtn.textContent = "← Edit shipping";
+backToShippingBtn.textContent = "\u2190 Edit shipping";
 paymentBlock.appendChild(backToShippingBtn);
 
 const shippingPrompt = document.createElement("p");
@@ -189,6 +250,10 @@ shippingPrompt.className = "summary-prompt";
 shippingPrompt.textContent = "Complete shipping details to continue.";
 $("placeOrderBtn").before(shippingPrompt);
 
+/**
+ * Switches the visible checkout stage.
+ * @param {"shipping"|"payment"} stage
+ */
 function setCheckoutStage(stage) {
   const paymentStage = stage === "payment";
   shippingBlock.classList.toggle("checkout-stage-hidden", paymentStage);
@@ -214,30 +279,23 @@ continueToPaymentBtn.addEventListener("click", () => {
 
 backToShippingBtn.addEventListener("click", () => setCheckoutStage("shipping"));
 
-// ---------------------------------------------------------------------
-// Payment option cards — toggle .active and handle sub-panel visibility
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Payment Method Selection
+// ---------------------------------------------------------------------------
+
 document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
   radio.addEventListener("change", () => {
-    // Standard visual active class cleanup loop
     document
       .querySelectorAll(".payment-option")
       .forEach((opt) => opt.classList.remove("active"));
     radio.closest(".payment-option").classList.add("active");
 
-    /* ==========================================================================
-       ADDED: Dynamic sub-drawer panel show/hide visibility toggles
-       ========================================================================== */
     const cardPanel = $("cardDetailsPanel");
     if (cardPanel) {
       if (radio.value === "credit_card") {
-        // Smoothly reveal panel by peeling off the utility hidden CSS class style
         cardPanel.classList.remove("hidden");
       } else {
-        // Snap panel out of layout stream if option chosen is alternate form
         cardPanel.classList.add("hidden");
-
-        // Clean up remaining red validation styling borders if they change methods halfway
         ["cardName", "cardNumber", "cardExpiry", "cardCvv"].forEach((f) => {
           const wrap = document.querySelector(`.field[data-field="${f}"]`);
           if (wrap) wrap.classList.remove("error", "valid");
@@ -248,24 +306,22 @@ document.querySelectorAll('input[name="paymentMethod"]').forEach((radio) => {
   });
 });
 
+/** @returns {string} The currently selected payment method value. */
 function getSelectedPaymentMethod() {
   const checked = document.querySelector('input[name="paymentMethod"]:checked');
   return checked ? checked.value : "cash_on_delivery";
 }
 
-/* ==========================================================================
-   ADDED: CREDIT CARD INPUT MASKING & LIVE BRAND RECOGNITION
-   ========================================================================== */
+// ---------------------------------------------------------------------------
+// Credit Card Input Masking & Brand Detection
+// ---------------------------------------------------------------------------
 
-// Event Handlers for handling input formatting masks
 if ($("cardNumber")) {
-  // 1. Live Space Formatter & Brand Network Parser
+  // Format card number with spaces and detect brand.
   $("cardNumber").addEventListener("input", (e) => {
-    // Use regular expressions to strip any non-digit string entries immediately
     let value = e.target.value.replace(/\D/g, "");
     const badge = $("cardBrandBadge");
 
-    // Live Card Identification Pattern Parsing System
     if (value.startsWith("4")) {
       badge.textContent = "VISA";
       badge.className = "card-brand-badge visa";
@@ -277,80 +333,74 @@ if ($("cardNumber")) {
       badge.className = "card-brand-badge";
     }
 
-    // Input Mask: Smoothly split up numeric strings into chunks of 4 digits using space characters
-    let formatted = value.match(/.{1,4}/g)?.join(" ") || "";
-    e.target.value = formatted;
+    e.target.value = value.match(/.{1,4}/g)?.join(" ") || "";
   });
 
-  // 2. Automated Expiration Date Slash (/) Masking Insertion
+  // Insert "/" between month and year.
   $("cardExpiry").addEventListener("input", (e) => {
-    let value = e.target.value.replace(/\D/g, ""); // Restrict entry strictly to numeric strings
-
-    if (value.length > 2) {
-      // Injects the design forward slash mark automatically between Month and Year values
-      e.target.value = value.substring(0, 2) + "/" + value.substring(2, 4);
-    } else {
-      e.target.value = value;
-    }
+    let value = e.target.value.replace(/\D/g, "");
+    e.target.value =
+      value.length > 2
+        ? value.substring(0, 2) + "/" + value.substring(2, 4)
+        : value;
   });
 
-  // 3. Strict CVV Digit Restriction Safety Mask
+  // Restrict CVV to digits only.
   $("cardCvv").addEventListener("input", (e) => {
-    // Completely drops text alphabetic keys out of string contents immediately on input
     e.target.value = e.target.value.replace(/\D/g, "");
   });
 }
 
-/* ==========================================================================
-   ADDED: LUHN CHECKSUM ALGORITHM & INLINE SYSTEM FIELD VALIDATION
-   ========================================================================== */
+// ---------------------------------------------------------------------------
+// Credit Card Validation (Luhn Algorithm)
+// ---------------------------------------------------------------------------
 
 /**
- * Validates a credit card number using the Luhn Algorithm (Mod 10).
- * Reverses the digits, doubles every second number, and checks if the sum is a multiple of 10.
+ * Validates a card number using the Luhn (Mod 10) checksum.
+ * @param {string} digits – Raw digits (may include spaces).
+ * @returns {boolean}
  */
 function validateLuhnFormula(digits) {
-  let cleanStr = digits.replace(/\s+/g, ""); // Strip whitespace out of calculation parameters
-  if (!/^\d{15,16}$/.test(cleanStr)) return false; // Fail early if explicit length bounds aren't met
+  let cleanStr = digits.replace(/\s+/g, "");
+  if (!/^\d{15,16}$/.test(cleanStr)) return false;
 
   let totalSum = 0;
   let shouldDouble = false;
 
-  // Run loop backward from right-side values mapping coordinates to left tracking nodes
   for (let i = cleanStr.length - 1; i >= 0; i--) {
     let currentDigit = parseInt(cleanStr.charAt(i), 10);
-
     if (shouldDouble) {
       currentDigit *= 2;
-      if (currentDigit > 9) currentDigit -= 9; // Optimization: Subtracting 9 gets the same result as adding the digits of a 2-digit number (e.g., 14 -> 1+4=5, 14-9=5)
+      if (currentDigit > 9) currentDigit -= 9;
     }
-
     totalSum += currentDigit;
-    shouldDouble = !shouldDouble; // Invert doubling cycle flag modifier toggle state step
+    shouldDouble = !shouldDouble;
   }
-
   return totalSum % 10 === 0;
 }
 
+/** Checks if the card number has between 15 and 19 digits (after removing spaces). */
 function validateCardNumberFormat(digits) {
   const cleanStr = digits.replace(/\s+/g, "");
   return /^\d{15,19}$/.test(cleanStr);
 }
 
+/** Sets the visual valid/error state for a credit card field. */
 function applyFieldValidity(field, isValid) {
   const wrap = document.querySelector(`.field[data-field="${field}"]`);
   if (wrap) wrap.classList.toggle("error", !isValid);
   setDotState(field, isValid ? "valid" : "error");
 }
 
+/** @returns {boolean} */
 function isCardNameValid() {
   return $("cardName").value.trim().length >= 3;
 }
-
+/** @returns {boolean} */
 function isCardNumberValid() {
   return validateCardNumberFormat($("cardNumber").value);
 }
-
+/** @returns {boolean} */
 function isCardExpiryValid() {
   const expMatch = $("cardExpiry").value.match(/^(0[1-9]|1[0-2])\/([0-9]{2})$/);
   if (!expMatch) return false;
@@ -368,15 +418,12 @@ function isCardExpiryValid() {
     (parsedYear === currentYear && parsedMonth < currentMonth)
   );
 }
-
+/** @returns {boolean} */
 function isCardCvvValid() {
   return $("cardCvv").value.length >= 3;
 }
 
-/**
- * Validates the input state fields across the credit card block area container.
- * Injects/clears visual error structures dynamically based on pass states.
- */
+/** Validates all credit card fields and applies visual feedback. @returns {boolean} */
 function validateCreditCardFields() {
   let isValid = true;
 
@@ -395,8 +442,7 @@ function validateCreditCardFields() {
   return isValid;
 }
 
-// Live per-field feedback as the shopper types/tabs through the card form,
-// instead of only surfacing validity on submit.
+// Live per-field validation on blur.
 if ($("cardName")) {
   $("cardName").addEventListener("blur", () =>
     applyFieldValidity("cardName", isCardNameValid()),
@@ -422,9 +468,14 @@ if ($("cardName")) {
   });
 }
 
-// ---------------------------------------------------------------------
-// Place order
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Order Placement
+// ---------------------------------------------------------------------------
+
+/**
+ * Toggles the "Placing order..." state on the submit button.
+ * @param {boolean} isPlacing
+ */
 function setPlacingOrder(isPlacing) {
   const btn = $("placeOrderBtn");
   $("placeOrderLabel").textContent = isPlacing
@@ -447,14 +498,10 @@ $("placeOrderBtn").addEventListener("click", async () => {
     return;
   }
 
-  /* ==========================================================================
-     ADDED: Conditional Credit Card Intercept Validation Routine Block
-     ========================================================================== */
   if (getSelectedPaymentMethod() === "credit_card") {
-    // Block server connection pipelines early if fields contain formatting or logical evaluation errors
     if (!validateCreditCardFields()) {
       showCheckoutError("Please fix your missing or invalid card details.");
-      return; // Halts execution path immediately to safeguard your server inputs
+      return;
     }
   }
 
@@ -491,6 +538,10 @@ $("signOutBtn").addEventListener("click", () => {
   clearSession();
   window.location.href = "../index.html";
 });
+
+// ---------------------------------------------------------------------------
+// Initialisation
+// ---------------------------------------------------------------------------
 
 updateHeader();
 setCheckoutStage("shipping");

@@ -1,8 +1,29 @@
 /* ==========================================================================
-   GLOBAL CONFIGURATION & THEME VARIABLES
+   SILICON HOUSE — Global Configuration & Theme Variables
+   ==========================================================================
+   This stylesheet defines the entire visual design system for the
+   SILICON HOUSE eCommerce platform. It includes:
+
+     • CSS custom properties (theme tokens) for colours, surfaces, borders
+     • Global box-sizing reset and base typography
+     • Dark colour-scheme configuration
+     • Custom scrollbar theming
+     • The master split-screen layout (.page) used by auth pages
+     • The left hero/sidebar panel (.hero) with circuit-trace SVGs
+     • The right form panel (.form-panel) with branded form controls
+     • Custom checkbox styling with neon node indicators
+     • Responsive breakpoints for tablet/mobile
+
+   Every other page-specific stylesheet (home.css, cart.css, etc.) builds
+   on top of the tokens and resets established here.
    ========================================================================== */
+
+/* ==========================================================================
+   1. THEME TOKENS (CSS Custom Properties)
+   ========================================================================== */
+
 :root {
-  /* Core Background & Layering Colors */
+  /* -- Core Background & Layering Colors -- */
   --bg: #0B0D12;
   /* Deep dark baseline background */
   --surface: #12151C;
@@ -12,7 +33,7 @@
   --border: #232838;
   /* Subtle low-contrast tech border accent */
 
-  /* Cyberpunk / Hardware Inspired Accent Palettes */
+  /* -- Cyberpunk / Hardware Inspired Accent Palettes -- */
   --copper: #B8742E;
   /* Industrial metallic copper primary accent */
   --copper-bright: #D68F46;
@@ -24,19 +45,22 @@
   --danger: #E2574C;
   /* Alert red for field/server error warnings */
 
-  /* Typography Colors */
+  /* -- Typography Colors -- */
   --text: #EDEEF2;
   /* Off-white primary text for high readability */
   --text-muted: #8B93A7;
   /* Low-emphasis slate gray text for labels and subheadings */
 }
 
-/* Global Box-Sizing Reset: Ensures padding/borders are included in total widths */
+/* ==========================================================================
+   2. GLOBAL RESETS & BASE STYLES
+   ========================================================================== */
+
+/* Ensure padding/borders are included in total widths */
 * {
   box-sizing: border-box;
 }
 
-/* Base Document Configuration */
 body {
   margin: 0;
   background: var(--bg);
@@ -46,8 +70,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Native form controls (date pickers, dropdown chevrons, etc.) render in a
-   dark palette automatically instead of clashing light-mode system UI. */
+/* Native form controls render in dark palette automatically */
 :root {
   color-scheme: dark;
 }
@@ -56,13 +79,16 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Brand-tinted text selection instead of the browser default blue */
+/* Brand-tinted text selection instead of browser default blue */
 ::selection {
   background: rgba(79, 209, 197, 0.25);
   color: var(--text);
 }
 
-/* Themed scrollbars (Firefox + WebKit) so the chrome matches the interface */
+/* ==========================================================================
+   3. THEMED SCROLLBARS
+   ========================================================================== */
+
 * {
   scrollbar-color: var(--border) var(--surface);
   scrollbar-width: thin;
@@ -87,8 +113,10 @@ html {
   background: var(--copper);
 }
 
-/* One consistent keyboard-focus ring across every interactive element,
-   layered on top of whatever component-specific state already exists. */
+/* ==========================================================================
+   4. KEYBOARD FOCUS RING
+   ========================================================================== */
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -105,15 +133,19 @@ textarea:focus-visible,
   }
 }
 
-/* Master Layout Framework: Establishes a 100vh split screen viewport */
+/* ==========================================================================
+   5. MASTER LAYOUT — Split-screen auth pages
+   ========================================================================== */
+
 .page {
   min-height: 100vh;
   display: flex;
 }
 
 /* ==========================================================================
-   LEFT PANEL: HERO & BRANDING SIDEBAR
+   6. LEFT PANEL — Hero & Branding Sidebar
    ========================================================================== */
+
 .hero {
   width: 42%;
   background: linear-gradient(160deg, #0D1017 0%, #0A0C11 100%);
@@ -124,7 +156,6 @@ textarea:focus-visible,
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  /* Clips absolute background decorative items like trace lines */
 }
 
 /* Absolute SVGs creating geometric circuit trace overlays */
@@ -136,7 +167,7 @@ textarea:focus-visible,
   height: 100%;
 }
 
-/* Sidebar Brand Identity Layout */
+/* Sidebar brand identity */
 .brand-auth {
   display: flex;
   align-items: center;
@@ -158,7 +189,7 @@ textarea:focus-visible,
   position: relative;
 }
 
-/* Prominent Tech Typography Headers */
+/* Prominent tech typography headers */
 .hero h1 {
   font-family: 'Chakra Petch', sans-serif;
   font-weight: 700;
@@ -178,7 +209,7 @@ textarea:focus-visible,
   margin: 0;
 }
 
-/* Decorative Hardcore Spec-Sheet Styling at Bottom of Sidebar */
+/* Decorative spec-sheet at the bottom of the sidebar */
 .spec-sheet {
   position: relative;
   border-top: 1px solid var(--border);
@@ -199,24 +230,23 @@ textarea:focus-visible,
 }
 
 /* ==========================================================================
-   RIGHT PANEL: INTERACTIVE ACCESSIBLE FORM
+   7. RIGHT PANEL — Interactive Form
    ========================================================================== */
+
 .form-panel {
   flex: 1;
-  /* Absorbs remaining screen space to the right of the sidebar */
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px 24px;
 }
 
-/* Standard constrained container for login/register layout structures */
 .form-wrap {
   width: 100%;
   max-width: 400px;
 }
 
-/* Mobile Top Branding Navigation Block (Hidden on desktop layout viewport) */
+/* Mobile top-branding (hidden on desktop) */
 .mobile-brand {
   display: none;
   align-items: center;
@@ -243,7 +273,10 @@ textarea:focus-visible,
   margin: 0 0 32px;
 }
 
-/* Individual Form Fields Structure */
+/* ==========================================================================
+   8. FORM FIELDS
+   ========================================================================== */
+
 .field {
   margin-bottom: 20px;
 }
@@ -260,7 +293,7 @@ textarea:focus-visible,
   text-transform: uppercase;
 }
 
-/* Interactive Hardware Status Indication Dots (Glow Effect) */
+/* Hardware status indicator dots */
 .pin-dot {
   width: 8px;
   height: 8px;
@@ -281,12 +314,11 @@ textarea:focus-visible,
   box-shadow: 0 0 8px var(--danger);
 }
 
-/* Position Wrap for Inside Form Icons & Utility Buttons */
+/* Input wrapper for icon positioning */
 .input-wrap {
   position: relative;
 }
 
-/* Absolute left positioning for embedded inline form vector icons */
 .input-wrap svg.icon {
   position: absolute;
   left: 14px;
@@ -296,14 +328,13 @@ textarea:focus-visible,
   pointer-events: none;
 }
 
-/* Text Input Baseline Theme Styles */
+/* Text input baseline */
 .input-wrap input {
   width: 100%;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px 14px 12px 40px;
-  /* Generous left padding prevents text overlapping icon */
   color: var(--text);
   font-family: 'Inter', sans-serif;
   font-size: 14px;
@@ -315,7 +346,6 @@ textarea:focus-visible,
   color: #5A6274;
 }
 
-/* Interactive State Ring Focus Mechanics */
 .input-wrap input:focus {
   border-color: var(--signal);
   box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.13);
@@ -331,12 +361,12 @@ textarea:focus-visible,
   box-shadow: 0 0 0 3px rgba(226, 87, 76, 0.13);
 }
 
-/* Right padding accommodation for fields containing interactive elements (e.g. show password) */
+/* Right padding for fields with toggle buttons */
 .input-wrap input.has-toggle {
   padding-right: 44px;
 }
 
-/* Absolute Toggle Visibility Button Positioning Overlay */
+/* Password visibility toggle */
 .toggle-btn {
   position: absolute;
   right: 12px;
@@ -350,7 +380,7 @@ textarea:focus-visible,
   padding: 0;
 }
 
-/* Client-Side Validation JavaScript Message Blocks */
+/* Field-level error messages */
 .field-error {
   display: none;
   align-items: center;
@@ -364,7 +394,7 @@ textarea:focus-visible,
   display: flex;
 }
 
-/* API/Database Integration Server Level Warning Messages */
+/* Server-level error banner */
 .server-error {
   display: none;
   align-items: center;
@@ -382,7 +412,10 @@ textarea:focus-visible,
   display: flex;
 }
 
-/* Main Submission Button Style Block */
+/* ==========================================================================
+   9. SUBMIT BUTTON
+   ========================================================================== */
+
 .submit-btn {
   width: 100%;
   background: var(--copper);
@@ -410,6 +443,10 @@ textarea:focus-visible,
   cursor: default;
 }
 
+/* ==========================================================================
+   10. FORM FOOTER & OPTIONS
+   ========================================================================== */
+
 .footer-line {
   text-align: center;
   margin-top: 24px;
@@ -423,7 +460,6 @@ textarea:focus-visible,
   font-weight: 500;
 }
 
-/* Sub-Form Structural Element Control Wrapper */
 .form-options {
   display: flex;
   align-items: center;
@@ -431,44 +467,80 @@ textarea:focus-visible,
   margin-bottom: 24px;
 }
 
-/* Legacy Native Styling Configurations for Fallbacks */
+/* ==========================================================================
+   11. CUSTOM CHECKBOX (Neon Node)
+   ========================================================================== */
+
 .remember-me {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: var(--text-muted);
+  gap: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem;
+  color: #a0aec0;
   cursor: pointer;
   -webkit-user-select: none;
-  /* Safari & iOS */
   -moz-user-select: none;
-  /* Firefox Legacy */
   -ms-user-select: none;
-  /* IE Legacy */
   user-select: none;
+  transition: color 0.2s ease;
+}
+
+.remember-me:hover {
+  color: #E2E8F0;
 }
 
 .remember-me input[type="checkbox"] {
-  width: 15px;
-  height: 15px;
-  accent-color: var(--copper);
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #12161A;
+  border: 1.5px solid #2D3748;
+  border-radius: 2px;
+  position: relative;
+  outline: none;
   cursor: pointer;
+  display: grid;
+  place-content: center;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.forgot-link {
-  font-size: 13px;
-  color: var(--signal);
-  text-decoration: none;
-  font-weight: 500;
+.remember-me input[type="checkbox"]:hover {
+  border-color: #4FD1C5;
+  box-shadow: 0 0 6px rgba(79, 209, 197, 0.25);
 }
 
-.forgot-link:hover {
-  text-decoration: underline;
+.remember-me input[type="checkbox"]:checked {
+  border-color: #B8742E;
+  background: #1A1612;
+  box-shadow: 0 0 8px rgba(184, 116, 46, 0.3);
+}
+
+.remember-me input[type="checkbox"]::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  background-color: #4FD1C5;
+  transform: scale(0);
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 6px #4FD1C5, 0 0 2px #4FD1C5;
+}
+
+.remember-me input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+.remember-me input[type="checkbox"]:focus-visible {
+  outline: 2px solid #4FD1C5;
+  outline-offset: 2px;
 }
 
 /* ==========================================================================
-   SUCCESS CONTEXT STATUS STATE
+   12. SUCCESS STATE
    ========================================================================== */
+
 .success-card {
   display: none;
   background: var(--surface);
@@ -510,102 +582,20 @@ textarea:focus-visible,
 }
 
 /* ==========================================================================
-   ADVANCED HARDWARE CHECKBOX OVERRIDES
-   Custom tactical styled checkbox implementation
+   13. RESPONSIVE BREAKPOINTS
    ========================================================================== */
-.remember-me {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  font-family: "Inter", sans-serif;
-  font-size: 0.875rem;
-  color: #a0aec0;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  transition: color 0.2s ease;
-}
 
-.remember-me:hover {
-  color: #E2E8F0;
-}
-
-/* Complete removal of default native box styles to initialize custom styling layout */
-.remember-me input[type="checkbox"] {
-  -webkit-appearance: none;
-  appearance: none;
-
-  width: 16px;
-  height: 16px;
-  background: #12161A;
-  border: 1.5px solid #2D3748;
-  border-radius: 2px;
-  position: relative;
-  outline: none;
-  cursor: pointer;
-
-  display: grid;
-  place-content: center;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.remember-me input[type="checkbox"]:hover {
-  border-color: #4FD1C5;
-  box-shadow: 0 0 6px rgba(79, 209, 197, 0.25);
-}
-
-.remember-me input[type="checkbox"]:checked {
-  border-color: #B8742E;
-  background: #1A1612;
-  box-shadow: 0 0 8px rgba(184, 116, 46, 0.3);
-}
-
-/* Custom embedded neon node dot indicator using pseudo-element masking */
-.remember-me input[type="checkbox"]::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 1px;
-  background-color: #4FD1C5;
-  transform: scale(0);
-  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 0 6px #4FD1C5, 0 0 2px #4FD1C5;
-}
-
-.remember-me input[type="checkbox"]:checked::before {
-  transform: scale(1);
-}
-
-/* Accessibility Keyboard Focus Indicator Rings */
-.remember-me input[type="checkbox"]:focus-visible {
-  outline: 2px solid #4FD1C5;
-  outline-offset: 2px;
-}
-
-/* ==========================================================================
-   RESPONSIVE LAYOUT DISPATCH breakpoints
-   ========================================================================== */
 @media (max-width: 860px) {
-
-  /* Hides structural large graphic panel sidebar column on tablet/mobile views */
   .hero {
     display: none;
   }
 
-  /* Dispatches simple mobile branding visibility layout fallback */
   .mobile-brand {
     display: flex;
   }
 }
 
-/* ==========================================================================
-   ACCESSIBILITY AWARE SYSTEM OVERRIDES
-   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-
-  /* Nullifies performance or dynamic transition timings if system preferences request it */
   * {
     transition: none !important;
     animation: none !important;

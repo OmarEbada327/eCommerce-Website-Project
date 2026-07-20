@@ -1,6 +1,16 @@
+/* ==========================================================================
+   SILICON HOUSE — Storefront Home Page Styles
+   ==========================================================================
+   Covers the customer-facing storefront: sticky navigation bar, hero banner
+   with circuit-trace artwork, product catalog grid with category filters,
+   search input, product cards with stock indicators, cart drawer overlay,
+   footer, and toast notifications. Responsive breakpoints at 1020px, 640px,
+   and 380px.
+   ========================================================================== */
+
 /* ---------- Top nav ---------- */
 body.home-page {
-  background-image: radial-gradient(rgba(79, 209, 197, 0.07) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(79, 209, 197, 0.035) 1px, transparent 1px);
   background-size: 26px 26px;
 }
 
@@ -137,7 +147,7 @@ body.home-page {
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -188,11 +198,14 @@ body.home-page {
   justify-content: center;
   color: var(--text);
   cursor: pointer;
-  transition: border-color 150ms ease;
+  text-decoration: none;
+  transition: border-color 150ms ease, transform 150ms ease, box-shadow 150ms ease;
 }
 
 .cart-btn:hover {
   border-color: var(--copper);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, .25);
 }
 
 .cart-count {
@@ -211,6 +224,7 @@ body.home-page {
   align-items: center;
   justify-content: center;
   padding: 0 3px;
+  box-shadow: 0 0 0 2px var(--bg);
 }
 
 .auth-actions {
@@ -238,6 +252,7 @@ body.home-page {
   cursor: pointer;
   border: none;
   white-space: nowrap;
+  transition: border-color 150ms ease, color 150ms ease, background 150ms ease, transform 150ms ease, box-shadow 150ms ease;
 }
 
 .btn-ghost-small {
@@ -249,6 +264,7 @@ body.home-page {
 .btn-ghost-small:hover {
   border-color: var(--signal);
   color: var(--signal);
+  transform: translateY(-1px);
 }
 
 .btn-primary-small {
@@ -258,12 +274,40 @@ body.home-page {
 
 .btn-primary-small:hover {
   background: var(--copper-bright);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(184, 116, 46, .3);
 }
 
 .user-greeting {
-  font-family: 'JetBrains Mono', monospace;
+  align-items: center;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  display: inline-flex;
+  font-family: 'Inter', sans-serif;
   font-size: 12px;
-  color: var(--text-muted);
+  font-weight: 600;
+  gap: 6px;
+  padding: 4px 10px 4px 5px;
+  white-space: nowrap;
+}
+
+.user-greeting:empty,
+.user-greeting.initially-hidden {
+  display: none;
+}
+
+.user-greeting::before {
+  background-color: var(--copper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2312151C' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 50%;
+  content: "";
+  flex-shrink: 0;
+  height: 20px;
+  width: 20px;
 }
 
 /* ---------- Hero banner ---------- */
@@ -282,7 +326,7 @@ body.home-page {
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.14;
+  opacity: 0.1;
   pointer-events: none;
 }
 
@@ -562,14 +606,14 @@ body.home-page {
   right: 0;
   height: 220px;
   width: 100%;
-  opacity: 0.13;
+  opacity: 0.1;
   pointer-events: none;
 }
 
 @media (max-width: 640px) {
   .page-traces {
     height: 160px;
-    opacity: 0.1;
+    opacity: 0.08;
   }
 }
 
@@ -586,7 +630,7 @@ body.home-page {
   inset: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.08;
+  opacity: 0.06;
   pointer-events: none;
 }
 
@@ -766,13 +810,19 @@ body.home-page {
   }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 640px) {
   .site-nav .nav-links {
     display: none;
   }
-}
 
-@media (max-width: 640px) {
+  .site-nav.nav-links-visible .nav-links {
+    display: flex;
+  }
+  .site-nav .nav-actions .user-greeting {
+    flex: 0 0 auto;
+    margin-right: 0;
+  }
+
   .site-nav-inner {
     gap: 10px;
     padding: 12px 16px;
@@ -788,13 +838,15 @@ body.home-page {
   }
 
   .site-nav .nav-actions {
+    align-items: center;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
     box-shadow: 0 16px 36px rgba(0, 0, 0, .35);
     display: none;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px 12px;
     padding: 12px;
     position: absolute;
     right: 16px;
@@ -807,21 +859,38 @@ body.home-page {
     display: flex;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .site-nav.menu-open .nav-actions {
+      animation: nav-dropdown-in 180ms ease;
+    }
+  }
+
+  @keyframes nav-dropdown-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .site-nav .nav-actions .cart-btn {
-    align-self: flex-start;
+    flex: 0 0 auto;
   }
 
   .site-nav .nav-actions .auth-actions {
     align-items: stretch;
+    flex: 1 1 100%;
     flex-wrap: wrap;
     gap: 8px;
-    width: 100%;
   }
 
   .site-nav .nav-actions .user-greeting {
-    display: block;
-    padding: 4px 2px;
-    width: 100%;
+    flex: 0 0 auto;
+    margin-right: 0;
   }
 
   .site-nav .nav-actions .btn-ghost-small,

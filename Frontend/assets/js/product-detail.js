@@ -1,12 +1,29 @@
+/* ==========================================================================
+   SILICON HOUSE — Product Detail Page
+   Displays a single product's full information: image gallery with thumbnails,
+   price, stock indicator, quantity stepper, spec sheet, and add-to-cart.
+   Handles both authenticated and guest states.
+   ========================================================================== */
+
 const $ = (id) => document.getElementById(id);
 
+/** @type {Object|null} The loaded product data. */
 let product = null;
+
+/** @type {{ products: Array<Object> }} Cart snapshot for the badge count. */
 let cartData = { products: [] };
+
+/** @type {number} Current quantity selected in the stepper. */
 let selectedQty = 1;
 
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+
+/**
+ * Shows a brief toast notification.
+ * @param {string} message
+ */
 function showToast(message) {
   const toast = $("toast");
   toast.textContent = message;
@@ -14,16 +31,31 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
+/**
+ * Formats a number as EGP currency.
+ * @param {number} n
+ * @returns {string}
+ */
 function money(n) {
   return (
     "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
   );
 }
 
+/**
+ * Unwraps a response envelope.
+ * @param {Object|Array} payload
+ * @returns {Object|Array}
+ */
 function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
 }
 
+/**
+ * Builds the visual stock-level tick indicator.
+ * @param {number} qty
+ * @returns {string} HTML
+ */
 function stockTicksHTML(qty) {
   const level = qty <= 5 ? 1 : qty <= 20 ? 3 : 5;
   const cls = qty <= 5 ? "low" : "ok";
@@ -34,15 +66,23 @@ function stockTicksHTML(qty) {
   return `<div class="ticks">${ticks}</div><span class="stock-label">${qty} in stock</span>`;
 }
 
+/**
+ * Updates the footer API status indicator.
+ * @param {boolean} reachable
+ */
 async function checkApiStatus(reachable) {
   const el = $("apiStatus");
   el.textContent = reachable ? "online" : "offline";
   el.className = reachable ? "online" : "offline";
 }
 
-// ---------------------------------------------------------------------
-// Auth UI
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Authentication UI
+// ---------------------------------------------------------------------------
+
+/**
+ * Toggles guest vs. signed-in navigation, shows greeting and admin link.
+ */
 function updateAuthUI() {
   const loggedIn = isLoggedIn();
   const user = getUser();
@@ -50,10 +90,15 @@ function updateAuthUI() {
   $("guestActions").style.display = loggedIn ? "none" : "flex";
   $("userActions").style.display = loggedIn ? "flex" : "none";
 
+  const greetingEl = $("userGreeting");
   if (loggedIn && user) {
-    $("userGreeting").textContent = `Hi, ${user.name}`;
+    greetingEl.textContent = `Hi, ${user.name}`;
+    greetingEl.style.display = "inline-flex";
     $("adminLink").style.display =
-      user.role === "admins" ? "inline-block" : "none";
+      user.role === "admins" ? "inline-flex" : "none";
+  } else {
+    greetingEl.style.display = "none";
+    $("adminLink").style.display = "none";
   }
 }
 
@@ -65,17 +110,17 @@ $("signOutBtn").addEventListener("click", () => {
   showToast("Signed out");
 });
 
-// ---------------------------------------------------------------------
-// Get the product id from the URL
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Product Loading & Rendering
+// ---------------------------------------------------------------------------
+
+/** Reads the `id` query parameter from the URL. */
 function getProductIdFromUrl() {
   const params = new URLSearchParams(window.location.search);
   return params.get("id");
 }
 
-// ---------------------------------------------------------------------
-// Load + render the product
-// ---------------------------------------------------------------------
+/** Fetches the product from the backend and renders the detail view. */
 async function loadProduct() {
   const id = getProductIdFromUrl();
   if (!id) {
@@ -95,12 +140,14 @@ async function loadProduct() {
   }
 }
 
+/** Shows a generic error state when the product cannot be loaded. */
 function showErrorState() {
   $("loadingState").classList.add("hidden");
   $("errorState").classList.remove("hidden");
   $("productContent").classList.add("hidden");
 }
 
+/** Populates every element on the page with the product data. */
 function renderProduct() {
   const images =
     product.images && product.images.length ? product.images : [{ url: "" }];
@@ -152,9 +199,10 @@ function renderProduct() {
   $("productContent").classList.remove("hidden");
 }
 
-// ---------------------------------------------------------------------
-// Quantity stepper (bounded by available stock)
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Quantity Stepper
+// ---------------------------------------------------------------------------
+
 $("qtyInc").addEventListener("click", () => {
   if (!product) return;
   if (selectedQty < product.quantity) {
@@ -169,9 +217,10 @@ $("qtyDec").addEventListener("click", () => {
   }
 });
 
-// ---------------------------------------------------------------------
-// Add to cart
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Add to Cart
+// ---------------------------------------------------------------------------
+
 $("addToCartBtn").addEventListener("click", async () => {
   if (!product) return;
 
@@ -194,9 +243,10 @@ $("addToCartBtn").addEventListener("click", async () => {
   }
 });
 
-// ---------------------------------------------------------------------
-// Cart drawer
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Cart Badge Sync
+// ---------------------------------------------------------------------------
+
 async function loadCart() {
   if (!isLoggedIn()) return;
   try {
@@ -213,6 +263,10 @@ function updateCartUI() {
   const items = cartData.products || [];
   $("cartCount").textContent = items.reduce((sum, i) => sum + i.quantity, 0);
 }
+
+// ---------------------------------------------------------------------------
+// Initialisation
+// ---------------------------------------------------------------------------
 
 loadProduct();
 

@@ -1,13 +1,39 @@
-// Short helper utility to target and retrieve DOM elements by their unique IDs
+/* ==========================================================================
+   SILICON HOUSE — Storefront Home Page
+   Drives the main product catalog: fetches products from the backend,
+   renders them in a responsive grid, handles real-time search and
+   category filtering, and manages the cart badge count.
+   ========================================================================== */
+
+/**
+ * Shorthand for document.getElementById — keeps the rest of the code terse.
+ * @param {string} id
+ * @returns {HTMLElement|null}
+ */
 const $ = (id) => document.getElementById(id);
 
-// Global application state holders for catalog products, cart details, and active filters
+/** @type {Array<Object>} Full product list fetched from the backend. */
 let allProducts = [];
+
+/** @type {{ products: Array<Object> }} Client-side cart snapshot for the badge. */
 let cartData = { products: [] };
+
+/** @type {string} Currently selected category slug (empty string = "All"). */
 let activeCategory = "";
+
+/** @type {string} Current search query — re-evaluated on every keystroke. */
 let searchQuery = "";
 
-// Displays temporary popup notifications on screen for feedback notifications
+// ---------------------------------------------------------------------------
+// UI Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Displays a brief toast notification at the bottom of the viewport.
+ * Automatically hides after 2.2 seconds.
+ *
+ * @param {string} message – The text to show.
+ */
 function showToast(message) {
   const toast = $("toast");
   toast.textContent = message;
@@ -15,19 +41,36 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
-// Formats numerical price numbers into a standardized EGP currency string display format
+/**
+ * Formats a numeric value as an EGP currency string.
+ *
+ * @param {number} n – The raw price.
+ * @returns {string} e.g. "EGP 24,999.00".
+ */
 function money(n) {
   return (
     "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
   );
 }
 
-// Extracts data payload blocks safely regardless of the custom server response wrapper format
+/**
+ * Unwraps a response envelope — handles both `{ data: [...] }` and
+ * flat array/object responses from the backend.
+ *
+ * @param {Object|Array} payload – The raw API response.
+ * @returns {Object|Array} The meaningful data inside the envelope.
+ */
 function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
 }
 
-// Generates dynamic HTML components representing visual inventory levels using status ticks
+/**
+ * Builds the visual stock-level indicator: five tick marks that light up
+ * green (ok) or red (low) depending on the available quantity.
+ *
+ * @param {number} qty – Units in stock.
+ * @returns {string} HTML string for the stock-row element.
+ */
 function stockTicksHTML(qty) {
   const level = qty <= 5 ? 1 : qty <= 20 ? 3 : 5;
   const cls = qty <= 5 ? "low" : "ok";
@@ -38,7 +81,14 @@ function stockTicksHTML(qty) {
   return `<div class="stock-row"><div class="ticks">${ticks}</div><span class="stock-label">${qty} in stock</span></div>`;
 }
 
-// Toggles navigation actions and displays personalized greetings based on authorization data states
+// ---------------------------------------------------------------------------
+// Authentication UI
+// ---------------------------------------------------------------------------
+
+/**
+ * Toggles between guest and signed-in navigation states. Shows the user
+ * greeting badge inline, and reveals the Admin link only for admins.
+ */
 function updateAuthUI() {
   const loggedIn = isLoggedIn();
   const user = getUser();
@@ -46,14 +96,19 @@ function updateAuthUI() {
   $("guestActions").style.display = loggedIn ? "none" : "flex";
   $("userActions").style.display = loggedIn ? "flex" : "none";
 
+  const greetingEl = $("userGreeting");
   if (loggedIn && user) {
-    $("userGreeting").textContent = `Hi, ${user.name}`;
+    greetingEl.textContent = `Hi, ${user.name}`;
+    greetingEl.style.display = "inline-flex";
     $("adminLink").style.display =
-      user.role === "admins" ? "inline-block" : "none";
+      user.role === "admins" ? "inline-flex" : "none";
+  } else {
+    greetingEl.style.display = "none";
+    $("adminLink").style.display = "none";
   }
 }
 
-// Handles user session termination, purges memory cart states, and refreshes the layout UI panels
+/** Handles sign-out: clears session, resets cart, refreshes UI. */
 $("signOutBtn").addEventListener("click", () => {
   clearSession();
   cartData = { products: [] };
@@ -62,7 +117,15 @@ $("signOutBtn").addEventListener("click", () => {
   showToast("Signed out");
 });
 
-// Updates the footer status display element indicator to display the live state of backend connectivity
+// ---------------------------------------------------------------------------
+// API Status
+// ---------------------------------------------------------------------------
+
+/**
+ * Updates the footer indicator to show whether the backend is reachable.
+ *
+ * @param {boolean} reachable – Whether the last API call succeeded.
+ */
 async function checkApiStatus(reachable) {
   const el = $("apiStatus");
   if (reachable) {
@@ -74,7 +137,11 @@ async function checkApiStatus(reachable) {
   }
 }
 
-// Asynchronously fetches available inventory listings from the backend service layer
+// ---------------------------------------------------------------------------
+// Product Catalog
+// ---------------------------------------------------------------------------
+
+/** Fetches all products from the backend and renders the grid. */
 async function loadProducts() {
   try {
     const payload = await window.SiliconHouseApi.get("/products");
@@ -89,15 +156,18 @@ async function loadProducts() {
   }
 }
 
-// Handles data rendering patterns, filter evaluation pipelines, and DOM injection for catalog grids
+/**
+ * Applies the active category filter and search query, then rebuilds
+ * the product grid markup. This is called on every filter change.
+ */
 function renderProducts() {
   let list = allProducts;
 
-  // Filter catalog data rows if a specific navigation category option is selected
+  // Filter by category.
   if (activeCategory) {
     list = list.filter((p) => p.category === activeCategory);
   }
-  // Filter catalog data rows dynamically based on the characters typed into search inputs
+  // Filter by search query (case-insensitive, matches product name).
   if (searchQuery.trim()) {
     const q = searchQuery.trim().toLowerCase();
     list = list.filter((p) => p.name.toLowerCase().includes(q));
@@ -107,13 +177,12 @@ function renderProducts() {
     ? activeCategory
     : "All products";
 
-  // Display empty matching fallback notices if zero inventory listings conform to constraints
   if (list.length === 0) {
     $("productGrid").innerHTML = `<p class="empty-msg">No products match.</p>`;
     return;
   }
 
-  // Construct markup templates and inject them directly inside the catalog inner bounds
+  // Generate card HTML for each product.
   $("productGrid").innerHTML = list
     .map((p) => {
       const images = p.images && p.images.length ? p.images : [{ url: "" }];
@@ -141,7 +210,7 @@ function renderProducts() {
     })
     .join("");
 
-  // Binds submission add actions across the dynamic cart button grids
+  // Attach click handlers to each "Add to cart" button.
   document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -150,7 +219,7 @@ function renderProducts() {
   });
 }
 
-// Binds link components inside navigation tabs to coordinate category switching routines
+/** Category-navigation click handler — updates the filter and re-renders. */
 document.querySelectorAll(".category-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
     e.preventDefault();
@@ -163,13 +232,22 @@ document.querySelectorAll(".category-nav a").forEach((link) => {
   });
 });
 
-// Captures input strokes inside search entries to update results lists in real-time
+/** Search-input handler — filters products by name on every keystroke. */
 $("searchInput").addEventListener("input", (e) => {
   searchQuery = e.target.value;
   renderProducts();
 });
 
-// Sends requests to save additions inside cart storage configurations on server instances
+// ---------------------------------------------------------------------------
+// Cart Operations
+// ---------------------------------------------------------------------------
+
+/**
+ * Adds a single unit of a product to the cart. Redirects unauthenticated
+ * users to the sign-in page.
+ *
+ * @param {string} productId – The product's _id.
+ */
 async function addToCart(productId) {
   if (!isLoggedIn()) {
     showToast("Sign in to add items to your cart");
@@ -190,7 +268,7 @@ async function addToCart(productId) {
   }
 }
 
-// Fetches persisted user cart details safely from connected storage api services
+/** Fetches the latest cart state from the backend to keep the badge in sync. */
 async function loadCart() {
   if (!isLoggedIn()) return;
   try {
@@ -203,17 +281,19 @@ async function loadCart() {
   }
 }
 
-// Keeps the header cart-count badge in sync with the server's cart state.
-// Full cart contents now live on their own page (pages/cart.html).
+/** Updates the cart-count badge in the header. */
 function updateCartUI() {
   const items = cartData.products || [];
   $("cartCount").textContent = items.reduce((sum, i) => sum + i.quantity, 0);
 }
 
-// Kickstart data ingestion tasks on compilation cycles
+// ---------------------------------------------------------------------------
+// Initialisation
+// ---------------------------------------------------------------------------
+
 loadProducts();
 
-// Verifies availability dependencies across identity scripts during setup intervals
+// Guard against missing auth.js (e.g. a failed script load).
 if (typeof isLoggedIn === "function") {
   try {
     updateAuthUI();

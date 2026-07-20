@@ -1,6 +1,19 @@
+/* ==========================================================================
+   SILICON HOUSE — My Orders Page
+   Displays the authenticated user's order history with status badges,
+   line-item details, shipping information, and payment methods.
+   Supports order cancellation for pending/processing orders.
+   This page is authenticated-only.
+   ========================================================================== */
+
 const $ = (id) => document.getElementById(id);
 const cancellingOrderIds = new Set();
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Shows a brief toast notification. */
 function showToast(message) {
   const toast = $("toast");
   toast.textContent = message;
@@ -8,23 +21,43 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
+// Authenticated-only guard.
 if (typeof isLoggedIn !== "function" || !isLoggedIn())
   window.location.href = "auth/login.html";
 
+/**
+ * Unwraps a response envelope.
+ * @param {Object|Array} payload
+ * @returns {Object|Array}
+ */
 function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
 }
+
+/**
+ * Formats a number as EGP currency.
+ * @param {number} value
+ * @returns {string}
+ */
 function money(value) {
   return (
     "EGP " +
     Number(value || 0).toLocaleString("en-US", { minimumFractionDigits: 2 })
   );
 }
+
+/** Escapes unsafe characters for HTML interpolation. */
 function escapeHTML(value = "") {
   const node = document.createElement("span");
   node.textContent = value;
   return node.innerHTML;
 }
+
+/**
+ * Formats a date string for display (e.g. "Jul 20, 2026").
+ * @param {string} value – ISO date string.
+ * @returns {string}
+ */
 function formatDate(value) {
   return value
     ? new Intl.DateTimeFormat("en-EG", { dateStyle: "medium" }).format(
@@ -32,6 +65,12 @@ function formatDate(value) {
       )
     : "—";
 }
+
+/**
+ * Returns a human-readable payment method label.
+ * @param {string} method – Backend payment method identifier.
+ * @returns {string}
+ */
 function paymentLabel(method) {
   return (
     {
@@ -44,26 +83,58 @@ function paymentLabel(method) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Navigation Header
+// ---------------------------------------------------------------------------
+
+/**
+ * Updates the header greeting and admin links based on the current session.
+ */
 function updateHeader() {
   const user = getUser();
+  const greetingEl = $("userGreeting");
   if (user) {
     const isAdmin = user.role === "admins";
-    $("userGreeting").textContent = `Hi, ${user.name}`;
+    greetingEl.textContent = `Hi, ${user.name}`;
+    greetingEl.style.display = "inline-flex";
     $("adminLink").style.display = isAdmin ? "inline-flex" : "none";
     $("allOrdersAdminLink").style.display = isAdmin ? "inline-flex" : "none";
+  } else {
+    greetingEl.style.display = "none";
   }
 }
+
+// ---------------------------------------------------------------------------
+// Order Rendering
+// ---------------------------------------------------------------------------
+
+/**
+ * Extracts the populated product object from a cart item.
+ * @param {Object} item
+ * @returns {Object}
+ */
 function productInfo(item) {
   return item.productId && typeof item.productId === "object"
     ? item.productId
     : {};
 }
+
+/**
+ * Builds the HTML for a single order line item.
+ * @param {Object} item
+ * @returns {string}
+ */
 function itemMarkup(item) {
   const product = productInfo(item),
     image = product.images && product.images[0] && product.images[0].url;
   const name = product.name || "Product no longer available";
   return `<div class="order-item">${image ? `<img class="order-item-image" src="${escapeHTML(image)}" alt="${escapeHTML(name)}">` : '<div class="order-item-image-placeholder"></div>'}<div class="order-item-info"><p class="order-item-name">${escapeHTML(name)}</p><p class="order-item-meta">Quantity: ${Number(item.quantity || 0)}</p></div>${product.price != null ? `<span class="order-item-price">${money(product.price * item.quantity)}</span>` : ""}</div>`;
 }
+
+/**
+ * Renders the full order list, or the empty/loading state.
+ * @param {Array<Object>} orders – The user's orders.
+ */
 function renderOrders(orders) {
   $("ordersLoading").classList.add("hidden");
   if (!orders.length) {
@@ -87,6 +158,7 @@ function renderOrders(orders) {
     .join("");
   $("ordersList").classList.remove("hidden");
 
+  // Add cancel buttons for cancellable orders.
   orders.forEach((order, index) => {
     const status = String(order.status || "pending").toLowerCase();
     if (!["pending", "processing"].includes(status)) return;
@@ -103,6 +175,12 @@ function renderOrders(orders) {
       .appendChild(button);
   });
 }
+
+// ---------------------------------------------------------------------------
+// Cart Badge Sync
+// ---------------------------------------------------------------------------
+
+/** Fetches the cart count to display in the header badge. */
 async function loadCartCount() {
   try {
     const cart = unwrap(await authFetch("/cart")) || {};
@@ -114,6 +192,12 @@ async function loadCartCount() {
     $("cartCount").textContent = "0";
   }
 }
+
+// ---------------------------------------------------------------------------
+// Order Loading
+// ---------------------------------------------------------------------------
+
+/** Fetches the user's orders from the backend and renders them. */
 async function loadOrders() {
   $("ordersError").classList.add("hidden");
   $("ordersEmpty").classList.add("hidden");
@@ -132,11 +216,22 @@ async function loadOrders() {
     $("apiStatus").className = "offline";
   }
 }
+
+// ---------------------------------------------------------------------------
+// Sign Out
+// ---------------------------------------------------------------------------
+
 $("signOutBtn").addEventListener("click", () => {
   clearSession();
   window.location.href = "../index.html";
 });
+
+// ---------------------------------------------------------------------------
+// Retry & Cancel Handlers
+// ---------------------------------------------------------------------------
+
 $("retryBtn").addEventListener("click", loadOrders);
+
 $("ordersList").addEventListener("click", async (event) => {
   const button = event.target.closest(".cancel-order-btn");
   if (!button || button.disabled) return;
@@ -159,6 +254,11 @@ $("ordersList").addEventListener("click", async (event) => {
     cancellingOrderIds.delete(orderId);
   }
 });
+
+// ---------------------------------------------------------------------------
+// Initialisation
+// ---------------------------------------------------------------------------
+
 updateHeader();
 loadCartCount();
 loadOrders();

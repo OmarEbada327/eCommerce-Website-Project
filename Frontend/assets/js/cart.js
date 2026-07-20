@@ -1,20 +1,41 @@
+/* ==========================================================================
+   SILICON HOUSE — Shopping Cart Page
+   Manages the full cart view: displays line items with quantity stepper,
+   remove and clear actions, subtotal calculation, and checkout handoff.
+   This page is authenticated-only — unauthenticated visitors are redirected
+   to the login page.
+   ========================================================================== */
+
+/** Shorthand for document.getElementById. */
 const $ = (id) => document.getElementById(id);
 
+/** @type {{ products: Array<Object> }} The live cart state from the backend. */
 let cartData = { products: [] };
+
+/** @type {string|null} Product ID pending removal confirmation. */
 let pendingRemovePid = null;
+
+/** @type {string|null} The last quantity-adjusted product ID (for pulse animation). */
 let lastChangedPid = null;
+
+/** @type {boolean} Prevents concurrent cart mutations. */
 let cartBusy = false;
 
-// ---------------------------------------------------------------------
-// Cart is an authenticated-only page
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Guard: this page requires an active session.
+// ---------------------------------------------------------------------------
 if (typeof isLoggedIn !== "function" || !isLoggedIn()) {
   window.location.href = "auth/login.html";
 }
 
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Helpers
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+
+/**
+ * Shows a temporary toast notification at the bottom of the screen.
+ * @param {string} message
+ */
 function showToast(message) {
   const toast = $("toast");
   toast.textContent = message;
@@ -22,22 +43,45 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
+/**
+ * Formats a number as EGP currency.
+ * @param {number} n
+ * @returns {string}
+ */
 function money(n) {
   return (
     "EGP " + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2 })
   );
 }
 
+/**
+ * Unwraps a response envelope: `{ data: [...] }` versus flat response.
+ * @param {Object|Array} payload
+ * @returns {Object|Array}
+ */
 function unwrap(payload) {
   return payload && payload.data !== undefined ? payload.data : payload;
 }
 
+/**
+ * Escapes a string for safe HTML interpolation.
+ * @param {string} [value=""]
+ * @returns {string}
+ */
 function escapeHTML(value = "") {
   const node = document.createElement("span");
   node.textContent = String(value);
   return node.innerHTML;
 }
 
+/**
+ * Merges newly fetched cart items with the existing client-side product
+ * detail objects so that product name, price, and images stay available
+ * even when the server returns a minimal productId string.
+ *
+ * @param {Object} newCartData – Fresh cart payload from the API.
+ * @returns {Object} Merged cart data.
+ */
 function mergeProductDetails(newCartData) {
   if (!newCartData?.products || !cartData?.products) return newCartData;
   newCartData.products.forEach((newItem) => {
@@ -51,15 +95,23 @@ function mergeProductDetails(newCartData) {
   return newCartData;
 }
 
+/**
+ * Updates the footer API status indicator.
+ * @param {boolean} reachable
+ */
 async function checkApiStatus(reachable) {
   const el = $("apiStatus");
   el.textContent = reachable ? "online" : "offline";
   el.className = reachable ? "online" : "offline";
 }
 
-// ---------------------------------------------------------------------
-// Auth UI
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Authentication UI
+// ---------------------------------------------------------------------------
+
+/**
+ * Toggles guest vs. signed-in navigation and shows the greeting + admin link.
+ */
 function updateAuthUI() {
   const loggedIn = isLoggedIn();
   const user = getUser();
@@ -67,21 +119,29 @@ function updateAuthUI() {
   $("guestActions").style.display = loggedIn ? "none" : "flex";
   $("userActions").style.display = loggedIn ? "flex" : "none";
 
+  const greetingEl = $("userGreeting");
   if (loggedIn && user) {
-    $("userGreeting").textContent = `Hi, ${user.name}`;
+    greetingEl.textContent = `Hi, ${user.name}`;
+    greetingEl.style.display = "inline-flex";
     $("adminLink").style.display =
-      user.role === "admins" ? "inline-block" : "none";
+      user.role === "admins" ? "inline-flex" : "none";
+  } else {
+    greetingEl.style.display = "none";
+    $("adminLink").style.display = "none";
   }
 }
 
+/** Sign-out: clear session and redirect to homepage. */
 $("signOutBtn").addEventListener("click", () => {
   clearSession();
   window.location.href = "../index.html";
 });
 
-// ---------------------------------------------------------------------
-// Load + render cart
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Cart Loading & Rendering
+// ---------------------------------------------------------------------------
+
+/** Fetches the current cart from the backend and renders it. */
 async function loadCart() {
   try {
     const payload = await authFetch("/cart");
@@ -99,12 +159,20 @@ async function loadCart() {
   }
 }
 
+/**
+ * Extracts a product ID from a cart item, regardless of whether the
+ * server populated `productId` as a string or a populated object.
+ *
+ * @param {Object} item
+ * @returns {string}
+ */
 function pidOf(item) {
   return item.productId && item.productId._id
     ? item.productId._id
     : item.productId;
 }
 
+/** Renders the cart grid, skeleton state, or empty state. */
 function renderCart() {
   const items = cartData.products || [];
   $("cartCount").textContent = items.reduce((sum, i) => sum + i.quantity, 0);
@@ -177,6 +245,7 @@ function renderCart() {
     lastChangedPid = null;
   }
 
+  // Bind quantity stepper buttons
   document.querySelectorAll(".qty-inc").forEach((btn) => {
     btn.addEventListener("click", () =>
       changeQty(btn.closest(".cart-row").dataset.pid, 1),
@@ -195,9 +264,17 @@ function renderCart() {
   });
 }
 
-// ---------------------------------------------------------------------
-// Quantity change
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Quantity Changes
+// ---------------------------------------------------------------------------
+
+/**
+ * Adjusts the quantity for a given product. Deletes the item if the new
+ * quantity would be zero or negative.
+ *
+ * @param {string} productId
+ * @param {number} delta – +1 or -1.
+ */
 async function changeQty(productId, delta) {
   if (cartBusy) return;
   const item = cartData.products.find((i) => pidOf(i) === productId);
@@ -228,9 +305,11 @@ async function changeQty(productId, delta) {
   }
 }
 
-// ---------------------------------------------------------------------
-// Remove item
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Remove Item (with confirmation modal)
+// ---------------------------------------------------------------------------
+
+/** Opens the remove-item confirmation modal. */
 function openRemoveModal(productId, name) {
   pendingRemovePid = productId;
   $("removeItemName").textContent = name;
@@ -247,6 +326,7 @@ $("removeModalOverlay").addEventListener("click", (e) => {
   if (e.target.id === "removeModalOverlay") closeRemoveModal();
 });
 
+/** Confirms removal — deletes the cart line item on the server. */
 $("confirmRemoveBtn").addEventListener("click", async () => {
   if (!pendingRemovePid || cartBusy) return;
   const pid = pendingRemovePid;
@@ -257,7 +337,7 @@ $("confirmRemoveBtn").addEventListener("click", async () => {
   if (row) row.classList.add("removing");
 
   try {
-    await new Promise((resolve) => setTimeout(resolve, 220)); // let the fade-out play
+    await new Promise((resolve) => setTimeout(resolve, 220)); // let fade-out play
     const payload = await authFetch("/cart/" + pid, { method: "DELETE" });
     cartData = mergeProductDetails(unwrap(payload)) || { products: [] };
     showToast("Item removed");
@@ -269,9 +349,10 @@ $("confirmRemoveBtn").addEventListener("click", async () => {
   }
 });
 
-// ---------------------------------------------------------------------
-// Clear cart — with confirmation
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Clear Cart (with confirmation modal)
+// ---------------------------------------------------------------------------
+
 $("clearCartBtn").addEventListener("click", () => {
   $("clearModalOverlay").classList.add("open");
 });
@@ -284,6 +365,7 @@ $("clearModalOverlay").addEventListener("click", (e) => {
   if (e.target.id === "clearModalOverlay") closeClearModal();
 });
 
+/** Confirms clear — empties the entire cart on the server. */
 $("confirmClearBtn").addEventListener("click", async () => {
   if (cartBusy) return;
   closeClearModal();
@@ -300,9 +382,10 @@ $("confirmClearBtn").addEventListener("click", async () => {
   }
 });
 
-// ---------------------------------------------------------------------
-// Checkout handoff
-// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Checkout Handoff
+// ---------------------------------------------------------------------------
+
 $("proceedCheckoutBtn").addEventListener("click", () => {
   if (!cartData.products || cartData.products.length === 0) {
     showToast("Your cart is empty");
@@ -310,6 +393,10 @@ $("proceedCheckoutBtn").addEventListener("click", () => {
   }
   window.location.href = "checkout.html";
 });
+
+// ---------------------------------------------------------------------------
+// Initialisation
+// ---------------------------------------------------------------------------
 
 updateAuthUI();
 loadCart();
