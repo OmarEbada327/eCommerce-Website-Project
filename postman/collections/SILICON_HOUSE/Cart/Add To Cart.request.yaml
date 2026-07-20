@@ -1,5 +1,4 @@
 $kind: http-request
-name: Add To Cart
 description: Adds a selected product to the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to begin or update the shopping process by placing an item into the cart for future checkout.
 url: "{{baseUrl}}/cart"
 method: POST
@@ -14,4 +13,4 @@ body:
     \    \"quantity\": 1\r
 
     }"
-order: 1205977593605190
+order: 2000

@@ -1,6 +1,5 @@
 $kind: http-request
-name: Cancel Order
 description: Cancels a specific order in the **SILICON_HOUSE** eCommerce system. This request is used to stop order processing for an existing purchase, typically before fulfillment is completed, allowing users or authorized roles to manage unwanted or changed orders.
 url: "{{baseUrl}}/orders/{{orderId}}/cancel"
 method: PATCH
-order: 3503211560452130
+order: 5000

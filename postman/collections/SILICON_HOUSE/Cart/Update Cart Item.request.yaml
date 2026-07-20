@@ -1,5 +1,4 @@
 $kind: http-request
-name: Update Cart Item
 description: Updates an existing item in the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is typically used to change the quantity or details of a cart item, helping users manage their selected products before checkout.
 url: "{{baseUrl}}/cart"
 method: PUT
@@ -14,4 +13,4 @@ body:
     \    \"quantity\": 3\r
 
     }"
-order: 2854812334352589
+order: 3000

@@ -1,5 +1,4 @@
 $kind: http-request
-name: Checkout
 description: Creates a new order from the authenticated user’s cart in the **SILICON_HOUSE** eCommerce system. This request is used during checkout to finalize the purchase process, converting selected cart items into an order for processing and fulfillment.
 url: "{{baseUrl}}/orders/checkout"
 method: POST
@@ -32,4 +31,4 @@ scripts:
 
       if (data && data._id) { pm.collectionVariables.set('orderId', data._id); }"
     language: text/javascript
-order: 1783594906214
+order: 1000

@@ -1,5 +1,4 @@
 $kind: http-request
-name: Delete Product (admin only)
 url: "{{baseUrl}}/products/{{productId}}"
 method: DELETE
-order: 4190475870153415
+order: 5000

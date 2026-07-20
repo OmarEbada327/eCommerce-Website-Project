@@ -1,6 +1,5 @@
 $kind: http-request
-name: Get My Cart
 description: Retrieves the current authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to view all items currently added to the cart, along with their quantities and related product details, supporting cart review before checkout.
 url: "{{baseUrl}}/cart"
 method: GET
-order: 1783554632257
+order: 1000

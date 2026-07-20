@@ -1,6 +1,5 @@
 $kind: http-request
-name: Get Order By Id
 description: Retrieves the details of a specific order by its unique ID in the **SILICON_HOUSE** eCommerce system. This request is used to view complete information about an individual order, including its items, status, and related purchase details.
 url: "{{baseUrl}}/orders/{{orderId}}"
 method: GET
-order: 3024367061046782
+order: 3000

@@ -1,5 +1,4 @@
 $kind: http-request
-name: Register
 description: Creates a new user account by sending the user’s registration details to the authentication endpoint. This request uses the POST method with a JSON body containing the user’s name, email, password, phone number, and role. It does not require authentication, which makes it suitable for onboarding new users into the system.
 url: "{{baseUrl}}/auth/register"
 method: POST
@@ -22,5 +21,4 @@ body:
     }"
 auth:
   type: noauth
-examples: .resources/Register.resources/examples
-order: 1783538370909
+order: 1000

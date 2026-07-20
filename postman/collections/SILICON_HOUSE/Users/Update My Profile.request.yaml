@@ -1,5 +1,4 @@
 $kind: http-request
-name: Update My Profile
 description: Updates the authenticated user's profile information by sending revised personal details, such as name and phone number, to the `/users/profile` endpoint. This request is intended to let a signed-in user manage and keep their account information up to date.
 url: "{{baseUrl}}/users/profile"
 method: PUT
@@ -14,4 +13,4 @@ body:
     \    \"phone\": \"01144443333\" //It's not a real phone number :)\r
 
     }"
-order: 36934864741521
+order: 2000

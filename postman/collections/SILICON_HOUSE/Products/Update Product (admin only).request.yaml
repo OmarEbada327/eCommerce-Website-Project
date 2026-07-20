@@ -1,5 +1,4 @@
 $kind: http-request
-name: Update Product (admin only)
 url: "{{baseUrl}}/products/{{productId}}"
 method: PUT
 body:
@@ -8,11 +7,7 @@ body:
     - type: text
       key: price
       value: "55000"
-      description: ""
-      disabled: false
     - type: text
       key: quantity
       value: "8"
-      description: ""
-      disabled: false
-order: 4044075719823024
+order: 4000

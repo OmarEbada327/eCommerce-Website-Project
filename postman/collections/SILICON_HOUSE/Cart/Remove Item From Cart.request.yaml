@@ -1,6 +1,5 @@
 $kind: http-request
-name: Remove Item From Cart
 description: Removes a specific item from the authenticated user’s shopping cart in the **SILICON_HOUSE** eCommerce system. This request is used to manage cart contents by deleting products the user no longer wants before proceeding to checkout.
 url: "{{baseUrl}}/cart/{{productId}}"
 method: DELETE
-order: 3277769298351901
+order: 4000

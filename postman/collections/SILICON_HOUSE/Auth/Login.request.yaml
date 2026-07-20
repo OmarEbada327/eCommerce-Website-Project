@@ -1,5 +1,4 @@
 $kind: http-request
-name: Login
 description: Authenticates a user with the provided credentials and establishes access to protected resources within the application.
 url: "{{baseUrl}}/auth/login"
 method: POST
@@ -24,4 +23,4 @@ scripts:
 
       if (data.user && data.user.id) { pm.collectionVariables.set('userId', data.user.id); }"
     language: text/javascript
-order: 1479624970229599
+order: 2000

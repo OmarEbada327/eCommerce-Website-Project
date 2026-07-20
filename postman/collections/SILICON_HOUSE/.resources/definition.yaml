@@ -1,5 +1,4 @@
 $kind: collection
-name: SILICON_HOUSE
 description: |-
   This collection contains the main API requests for the **SILICON_HOUSE** eCommerce system. It is organized into functional areas such as authentication, product management, cart operations, order processing, and user administration, providing a structured way to test and manage both customer-facing and admin-only workflows across the application.
 
@@ -13,8 +12,8 @@ variables:
   userId: ""
   orderId: ""
 auth:
-  - id: 69d13fd8-22bc-494a-a37f-c400716563d9
+  - id: 8a2ac32a-eac0-4a8d-9ab3-608d314d168f
     type: bearer
-    name: Bearer auth
+    name: bearer auth
     credentials:
       token: "{{token}}"

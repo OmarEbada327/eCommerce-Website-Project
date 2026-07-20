@@ -1,4 +1,3 @@
 $kind: collection
-name: Cart
 description: This folder contains requests for managing shopping cart operations in the **SILICON_HOUSE** eCommerce API. It includes endpoints for viewing cart contents, adding products to the cart, updating item quantities, removing items, and clearing the cart, supporting the full customer cart workflow before checkout.
-order: 3682663417249791
+order: 4000

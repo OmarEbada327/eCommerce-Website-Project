@@ -1,6 +1,5 @@
 $kind: http-request
-name: Get My Orders
 description: Retrieves all orders associated with the authenticated user in the **SILICON_HOUSE** eCommerce system. This request is used to view the user’s order history, track past purchases, and access order-related details for account management.
 url: "{{baseUrl}}/orders/mine"
 method: GET
-order: 2810679118548304
+order: 2000
